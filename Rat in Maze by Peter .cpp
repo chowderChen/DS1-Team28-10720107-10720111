@@ -70,13 +70,13 @@ int main() {
 			} // for
 		} // for
 	} // if
-	else {
-		for ( int c = 0 ; c < y ; c++ ) {
-			for ( int d = 0 ; d < x ; d++ ) {
-				cout << maze[x][y] ;
-			} // for
-		} // for
-	} // else 
+    else {
+        for ( int c = 0 ; c < y ; c++ ) {
+		for ( int d = 0 ; d < x ; d++ ) {
+		    cout << maze[x][y] ;
+	        } // for
+	} // for
+    } // else 
 }
 
 
