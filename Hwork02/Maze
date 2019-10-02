@@ -1,80 +1,196 @@
-#include <stdio.h>
-#include <string>
-#include <iostream>
+#include<iostream>
+#include<cstdio>
+#include<cstring> 
 
 using namespace std ;
 
-/* rat in a maze - by Peter */
+typedef enum { Copy = -1, Right, Down, Left, Up } Moves ;
 
-char maze[20][20] ;
-char sol[20][20] ;
-
-struct Maze {
-	char ch = '0' ;
-	Maze* right = NULL ;
-	Maze* left = NULL ;
-	Maze* up = NULL ;
-	Maze* down = NULL ;
+class CoXY {
 	
-};
-
-bool SolveMaze( int m, int n ) {
-	if ( maze[m][n] == 'G' ){
-		return true ;
-	} // if
-	else {
-		if ( maze[m][n] == 'E' ) {
-			maze[m][n] = 'V' ;
-			if ( SolveMaze( m, n + 1 ) ) {
-				return true ;
-			} // if 
-			else if ( SolveMaze( m+1, n ) ) {
-				return true ;
-			} // else if
-			else if ( SolveMaze( m, n - 1 ) ) {
-				return true ;
-			} // else if
-			else if ( SolveMaze( m-1, n ) ) {
-				return true ;
-			} // else if
-			else {
-				maze[m][n] = 'E' ;
-				return false ;
-			} // else
+	int y ;
+	int x ;
+	
+	public:
+		
+	CoXY(): y(0), x(0) {
+	} ;
+		
+	CoXY( int py, int px ){
+		y = py ;
+		x = px ;
+	} // CoXY
+	
+	void setXY( const int py, const int px ) {
+		y = py ;
+		x = px ;
+	}
+	
+	int getX() const {
+		return x ;
+	}
+	int getY() const {
+		return y ;
+	}
+	
+	CoXY nextXY( Moves dir ) const {
+	
+		CoXY pt( y, x ) ;
+		switch( dir ) {
 			
+			case Right: 
+				pt.x++ ;
+				break ;
+			case Down:
+				pt.y-- ;
+				break ;
+			case Left:
+				pt.x-- ;
+				break ;
+			case Up:
+				pt.y++ ;
+				break ;
+			default:
+				;
+				
+		} // switch
+		
+		return pt ;
+	
+	} // nextXY
+	
+	bool match( const CoXY &pt ) {
+		
+		if ( y == pt.y && x == pt.x )
+			return true ;
+		
+		return false ;	
+		
+	} // match()
+	
+	bool inRange( const CoXY &maxLimit ) {
+		
+		if ( y >= 0 && y < maxLimit.y && x >= 0 && x < maxLimit.x )
+			return true ;
+			
+		return false ;
+		
+	} // inRange
+	
+}; // class CoXY
+
+class Maze {
+			
+	char **mArray ;
+	CoXY coMax ;
+	
+	public:
+		
+	bool Load( string fileName ) ;
+	
+	void Print() ;
+	
+	bool SolveMaze( CoXY pt ) ;
+	
+}; // class Maze
+
+void Maze::Print() {
+	
+	for ( int i = 0 ; i < coMax.getY() ; i++ ){
+		for( int j = 0 ; j < coMax.getX() ; j++ )
+			cout << mArray[i][j] ;
+			
+		cout << "\n" ;
+	} // for
+	
+} // Print
+
+bool Maze::Load( string fileName ){
+	
+	FILE *infile = NULL ;
+	bool success = false ;
+	coMax.setXY(0, 0) ;
+	
+	fileName = "input" + fileName + ".txt" ;
+	infile = fopen(fileName.c_str(), "r") ;
+	if ( infile == NULL )
+		;
+	else{
+		
+		int arg1 = 0, arg2 = 0 ;
+		fscanf( infile, "%d %d", &arg1, &arg2 ) ;
+		coMax.setXY( arg2, arg1 ) ;
+		if ( coMax.getY() > 0 && coMax.getX() > 0 ){
+			
+			int line = 0 ;
+			char *temp = new char[coMax.getX() + 1] ;
+			mArray = new char *[coMax.getY()] ;
+			
+			while( fscanf( infile, "%s", temp ) != EOF ){
+				
+				mArray[line] = new char [coMax.getX() + 1] ;
+				strcpy( mArray[line++], temp ) ;
+				
+			} // while
+			
+			if ( line == coMax.getY() )
+				success = true ;
+				
 		} // if
-		else {
-			return false ;
-		} // else
+		
+		fclose( infile ) ;	
 		
 	} // else
-} ;
+	
+	return success ;
+	
+} // Load()
 
+bool Maze::SolveMaze( CoXY pt ) {
+	
+	if ( !pt.inRange( coMax ) )
+		return false ;
+	else if ( mArray[pt.getX()][pt.getY()] == 'G' ) {
+		cout << "It's G!\n" ;
+		return true ;
+	} // else if
+	else if ( mArray[pt.getX()][pt.getY()] == 'E' ) {
+		
+		mArray[pt.getX()][pt.getY()] = 'V' ;
+		
+		if ( SolveMaze( pt.nextXY( Right ) ) ) {
+			mArray[pt.getX()][pt.getY()] = 'R' ; 
+			return true ;
+		} // if
+		else if ( SolveMaze( pt.nextXY( Down ) ) ) {
+			mArray[pt.getX()][pt.getY()] = 'R' ; 
+			return true ;
+		} // if
+		else if ( SolveMaze( pt.nextXY( Left ) ) ) {
+			mArray[pt.getX()][pt.getY()] = 'R' ; 
+			return true ;
+		} // if
+		else if ( SolveMaze( pt.nextXY( Up ) ) ) {
+			mArray[pt.getX()][pt.getY()] = 'R' ; 
+			return true ;
+		} // if
+			
+		return false ;
+		
+	} // else if
+	else
+		return false ;
+	
+} // SolveMaze
 
 int main() {
-	int x = 0 ;
-	int y = 0 ;
-	cin >> x ;
-	cin >> y ;
-	for( int j = 0 ; j < y ; j ++ ) {
-		for( int i = 0 ; i < x ; i ++ ) {
-			cin >> maze[i][j];
-			sol[i][j] = maze[i][j] ;
-		} // for
-	} // for
-
-    if ( SolveMaze( x, y ) ) {
-    	for( int a = 0 ; a < y ; a++ ){
-    		for ( int b = 0 ; b < x ; b++ ){
-    			cout << sol[a][b] ;
-			} // for
-		} // for
-	} // if
-    else {
-        for ( int c = 0 ; c < y ; c++ ) {
-		for ( int d = 0 ; d < x ; d++ ) {
-		    cout << maze[x][y] ;
-	        } // for
-	} // for
-    } // else 
-}
+	
+	Maze maze ;
+	maze.Load( "202" ) ;
+	CoXY pt(0, 0) ;
+	if ( maze.SolveMaze( pt ) )
+		cout << "YAS!\n" ;
+		
+	maze.Print() ;
+	
+} // main
