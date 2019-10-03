@@ -83,6 +83,8 @@ class CoXY {
 class Maze {
 			
 	char **mArray ;
+	char **mArrayR ;
+	
 	CoXY coMax ;
 	
 	public:
@@ -90,8 +92,9 @@ class Maze {
 	bool Load( string fileName ) ;
 	
 	void Print() ;
+	void PrintR() ;
 	
-	bool SolveMaze( CoXY pt ) ;
+	bool SolveMaze( CoXY pt, int &numGoal ) ;
 	
 }; // class Maze
 
@@ -100,6 +103,17 @@ void Maze::Print() {
 	for ( int i = 0 ; i < coMax.getY() ; i++ ){
 		for( int j = 0 ; j < coMax.getX() ; j++ )
 			cout << mArray[i][j] ;
+			
+		cout << "\n" ;
+	} // for
+	
+} // Print
+
+void Maze::PrintR() {
+	
+	for ( int i = 0 ; i < coMax.getY() ; i++ ){
+		for( int j = 0 ; j < coMax.getX() ; j++ )
+			cout << mArrayR[i][j] ;
 			
 		cout << "\n" ;
 	} // for
@@ -126,16 +140,20 @@ bool Maze::Load( string fileName ){
 			int line = 0 ;
 			char *temp = new char[coMax.getX() + 1] ;
 			mArray = new char *[coMax.getY()] ;
+			mArrayR = new char *[coMax.getY()] ;
 			
 			while( fscanf( infile, "%s", temp ) != EOF ){
-				
+		
 				mArray[line] = new char [coMax.getX() + 1] ;
-				strcpy( mArray[line++], temp ) ;
+				mArrayR[line] = new char [coMax.getX() + 1] ;
+				strcpy( mArray[line], temp ) ;
+				strcpy( mArrayR[line++], temp ) ;
 				
 			} // while
 			
-			if ( line == coMax.getY() )
+			if ( line == coMax.getY() ) {
 				success = true ;
+			} // if
 				
 		} // if
 		
@@ -147,32 +165,59 @@ bool Maze::Load( string fileName ){
 	
 } // Load()
 
-bool Maze::SolveMaze( CoXY pt ) {
+bool Maze::SolveMaze( CoXY pt, int &numGoal ) {
 	
 	if ( !pt.inRange( coMax ) )
 		return false ;
-	else if ( mArray[pt.getX()][pt.getY()] == 'G' ) {
+	else if ( mArray[pt.getY()][pt.getX()] == 'G' ) {
 		cout << "It's G!\n" ;
+		numGoal-- ;
+		if ( numGoal > 0 ) {
+			
+			mArray[pt.getY()][pt.getX()] = 'V' ;
+			
+			if ( SolveMaze( pt.nextXY( Right ), numGoal ) ) {
+				mArrayR[pt.getY()][pt.getX()] = 'G' ; 
+				return true ;
+			} // if
+			else if ( SolveMaze( pt.nextXY( Down ), numGoal ) ) {
+				mArrayR[pt.getY()][pt.getX()] = 'G' ; 
+				return true ;
+			} // else if
+			else if ( SolveMaze( pt.nextXY( Left ), numGoal ) ) {
+				mArrayR[pt.getY()][pt.getX()] = 'G' ; 
+				return true ;
+			} // else if
+			else if ( SolveMaze( pt.nextXY( Up ), numGoal ) ) {
+				mArrayR[pt.getY()][pt.getX()] = 'G' ; 
+				return true ;
+			} // else if
+			
+			mArray[pt.getY()][pt.getX()] = 'G' ;
+			
+			
+		} // if
+			
 		return true ;
 	} // else if
-	else if ( mArray[pt.getX()][pt.getY()] == 'E' ) {
+	else if ( mArray[pt.getY()][pt.getX()] == 'E' ) {
 		
-		mArray[pt.getX()][pt.getY()] = 'V' ;
+		mArray[pt.getY()][pt.getX()] = 'V' ;
 		
-		if ( SolveMaze( pt.nextXY( Right ) ) ) {
-			mArray[pt.getX()][pt.getY()] = 'R' ; 
+		if ( SolveMaze( pt.nextXY( Right ), numGoal ) ) {
+			mArrayR[pt.getY()][pt.getX()] = 'R' ; 
 			return true ;
 		} // if
-		else if ( SolveMaze( pt.nextXY( Down ) ) ) {
-			mArray[pt.getX()][pt.getY()] = 'R' ; 
+		else if ( SolveMaze( pt.nextXY( Down ), numGoal ) ) {
+			mArrayR[pt.getY()][pt.getX()] = 'R' ; 
 			return true ;
 		} // if
-		else if ( SolveMaze( pt.nextXY( Left ) ) ) {
-			mArray[pt.getX()][pt.getY()] = 'R' ; 
+		else if ( SolveMaze( pt.nextXY( Left ), numGoal ) ) {
+			mArrayR[pt.getY()][pt.getX()] = 'R' ; 
 			return true ;
 		} // if
-		else if ( SolveMaze( pt.nextXY( Up ) ) ) {
-			mArray[pt.getX()][pt.getY()] = 'R' ; 
+		else if ( SolveMaze( pt.nextXY( Up ), numGoal ) ) {
+			mArrayR[pt.getY()][pt.getX()] = 'R' ; 
 			return true ;
 		} // if
 			
@@ -187,16 +232,30 @@ bool Maze::SolveMaze( CoXY pt ) {
 int main() {
 	
 	Maze maze ;
-	string whichdeta ;
-	cout << "快點輸入你要的數據啦 : " ;
-	cin >> whichdeta ;
-	maze.Load( whichdeta ) ;
+	
+	string fileName ;
+	cout << "要讀哪個檔: " ;
+	cin >> fileName ; 
+	while ( !maze.Load( fileName ) ) {
+		cout << "Not working, try again: " ;
+		cin >> fileName ;
+	} // while
+	
+	int numGoal = 0 ;
+	cout << "要找幾個Goal: " ;
+	cin >> numGoal ;
+	
 	CoXY pt(0, 0) ;
-	if ( maze.SolveMaze( pt ) )
-		cout << "YAS!\n" ;
-	else
-		cout << "走不到耶~\n" ;
-		
-	maze.Print() ;
+	
+	if ( maze.SolveMaze( pt, numGoal ) ) {
+		maze.Print() ;
+		cout << "\n" ;
+		maze.PrintR() ;
+		cout << "Success" ;
+	} // if
+	else { 
+		maze.Print() ;
+		cout << "Fail\n" ;
+	} // else  
 	
 } // main
