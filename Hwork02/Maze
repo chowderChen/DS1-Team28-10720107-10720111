@@ -170,58 +170,54 @@ bool Maze::SolveMaze( CoXY pt, int &numGoal ) {
 	if ( !pt.inRange( coMax ) )
 		return false ;
 	else if ( mArray[pt.getY()][pt.getX()] == 'G' ) {
+		
 		cout << "It's G!\n" ;
 		numGoal-- ;
-		if ( numGoal > 0 ) {
 			
-			mArray[pt.getY()][pt.getX()] = 'V' ;
+		mArray[pt.getY()][pt.getX()] = 'V' ;
+		
+		if ( numGoal > 0 ) 	
+			SolveMaze( pt.nextXY( Right ), numGoal ) ;
+		if ( numGoal > 0 ) 
+			SolveMaze( pt.nextXY( Down ), numGoal ) ;
+		if ( numGoal > 0 ) 
+			SolveMaze( pt.nextXY( Left ), numGoal ) ;
+		if ( numGoal > 0 ) 
+			SolveMaze( pt.nextXY( Up ), numGoal ) ;
 			
-			if ( SolveMaze( pt.nextXY( Right ), numGoal ) ) {
-				mArrayR[pt.getY()][pt.getX()] = 'G' ; 
-				return true ;
-			} // if
-			else if ( SolveMaze( pt.nextXY( Down ), numGoal ) ) {
-				mArrayR[pt.getY()][pt.getX()] = 'G' ; 
-				return true ;
-			} // else if
-			else if ( SolveMaze( pt.nextXY( Left ), numGoal ) ) {
-				mArrayR[pt.getY()][pt.getX()] = 'G' ; 
-				return true ;
-			} // else if
-			else if ( SolveMaze( pt.nextXY( Up ), numGoal ) ) {
-				mArrayR[pt.getY()][pt.getX()] = 'G' ; 
-				return true ;
-			} // else if
-			
-			mArray[pt.getY()][pt.getX()] = 'G' ;
-			
-			
-		} // if
+		mArray[pt.getY()][pt.getX()] = 'G' ;
+				
 			
 		return true ;
+		
 	} // else if
 	else if ( mArray[pt.getY()][pt.getX()] == 'E' ) {
 		
 		mArray[pt.getY()][pt.getX()] = 'V' ;
+		bool success = false ;
 		
-		if ( SolveMaze( pt.nextXY( Right ), numGoal ) ) {
-			mArrayR[pt.getY()][pt.getX()] = 'R' ; 
-			return true ;
-		} // if
-		else if ( SolveMaze( pt.nextXY( Down ), numGoal ) ) {
-			mArrayR[pt.getY()][pt.getX()] = 'R' ; 
-			return true ;
-		} // if
-		else if ( SolveMaze( pt.nextXY( Left ), numGoal ) ) {
-			mArrayR[pt.getY()][pt.getX()] = 'R' ; 
-			return true ;
-		} // if
-		else if ( SolveMaze( pt.nextXY( Up ), numGoal ) ) {
-			mArrayR[pt.getY()][pt.getX()] = 'R' ; 
-			return true ;
-		} // if
+		if ( numGoal > 0 )
+			if ( SolveMaze( pt.nextXY( Right ), numGoal ) ) {
+				mArrayR[pt.getY()][pt.getX()] = 'R' ; 
+				success = true ;
+			} // if
+		if ( numGoal > 0 )
+			if ( SolveMaze( pt.nextXY( Down ), numGoal ) ) {
+				mArrayR[pt.getY()][pt.getX()] = 'R' ; 
+				success = true ;
+			} // if
+		if ( numGoal > 0 )
+			if ( SolveMaze( pt.nextXY( Left ), numGoal ) ) {
+				mArrayR[pt.getY()][pt.getX()] = 'R' ; 
+				success = true ;
+			} // if
+		if ( numGoal > 0 )
+			if ( SolveMaze( pt.nextXY( Up ), numGoal ) ) {
+				mArrayR[pt.getY()][pt.getX()] = 'R' ; 
+				success = true ;
+			} // if
 			
-		return false ;
+		return success ;
 		
 	} // else if
 	else
@@ -232,30 +228,41 @@ bool Maze::SolveMaze( CoXY pt, int &numGoal ) {
 int main() {
 	
 	Maze maze ;
+	int cmd = -1 ;
+	cout << "(1)One Goal\n(2)More Goals\n(0)Exit\nChoose a command: " ;
+	cin >> cmd ;
+	while ( cmd != 0 ) {
 	
-	string fileName ;
-	cout << "要讀哪個檔: " ;
-	cin >> fileName ; 
-	while ( !maze.Load( fileName ) ) {
-		cout << "Not working, try again: " ;
-		cin >> fileName ;
+		string fileName ;
+		cout << "要讀哪個檔: " ;
+		cin >> fileName ; 
+		while ( !maze.Load( fileName ) ) {
+			cout << "Not working, try again: " ;
+			cin >> fileName ;
+		} // while
+	
+		int numGoal = 1 ;
+		if ( cmd == 2 ) {
+			cout << "要找幾個Goal: " ;
+			cin >> numGoal ;
+		} // if
+	
+		CoXY pt(0, 0) ;
+	
+		if ( maze.SolveMaze( pt, numGoal ) ) {
+			maze.Print() ;
+			cout << "\n" ;
+			maze.PrintR() ;
+			cout << "Success\n\n" ;
+		} // if
+		else { 
+			maze.Print() ;
+			cout << "Fail\n\n" ;
+		} // else 
+		
+		cout << "(1)One Goal\n(2)More Goals\n(0)Exit\nChoose a command: " ;
+		cin >> cmd ; 
+	
 	} // while
-	
-	int numGoal = 0 ;
-	cout << "要找幾個Goal: " ;
-	cin >> numGoal ;
-	
-	CoXY pt(0, 0) ;
-	
-	if ( maze.SolveMaze( pt, numGoal ) ) {
-		maze.Print() ;
-		cout << "\n" ;
-		maze.PrintR() ;
-		cout << "Success" ;
-	} // if
-	else { 
-		maze.Print() ;
-		cout << "Fail\n" ;
-	} // else  
 	
 } // main
