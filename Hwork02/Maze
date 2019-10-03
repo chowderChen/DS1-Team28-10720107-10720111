@@ -2,6 +2,7 @@
 #include<cstdio>
 #include<cstring> 
 
+
 using namespace std ;
 
 typedef enum { Copy = -1, Right, Down, Left, Up } Moves ;
@@ -186,10 +187,12 @@ bool Maze::SolveMaze( CoXY pt ) {
 int main() {
 	
 	Maze maze ;
-	maze.Load( "202" ) ;
+	maze.Load( "205" ) ;
 	CoXY pt(0, 0) ;
 	if ( maze.SolveMaze( pt ) )
 		cout << "YAS!\n" ;
+	else
+		cout << "走不到耶~\n" ;
 		
 	maze.Print() ;
 	
