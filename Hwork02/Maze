@@ -187,7 +187,10 @@ bool Maze::SolveMaze( CoXY pt ) {
 int main() {
 	
 	Maze maze ;
-	maze.Load( "205" ) ;
+	string whichdeta ;
+	cout << "快點輸入你要的數據啦 : " ;
+	cin >> whichdeta ;
+	maze.Load( whichdeta ) ;
 	CoXY pt(0, 0) ;
 	if ( maze.SolveMaze( pt ) )
 		cout << "YAS!\n" ;
