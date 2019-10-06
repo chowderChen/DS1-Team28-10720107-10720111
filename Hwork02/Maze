@@ -82,8 +82,8 @@ class CoXY {
 
 class Maze {
 			
-	char **mArray ;
-	char **mArrayR ;
+	char **mArray ;	  // 放迷宮、裝V路徑
+	char **mArrayR ;  // 裝R路徑
 	
 	CoXY coMax ;
 	
@@ -91,12 +91,12 @@ class Maze {
 		
 	bool Load( string fileName ) ;
 	
-	void Print() ;
-	void PrintR() ;
+	void Print() ;    // 印出V路徑
+	void PrintR() ;   // 印出R路徑
 	
-	void GetGBack() ;
+	void GetGBack() ;   // 把V路徑被蓋掉的R找回來
 	
-	bool SolveMaze( CoXY pt, int &numGoal ) ;
+	bool SolveMaze( CoXY pt, int &numGoal ) ;   // 跑迷宮
 	
 }; // class Maze
 
@@ -104,8 +104,8 @@ void Maze::GetGBack() {
 	
 	for ( int i = 0 ; i < coMax.getY() ; i++ )
 		for ( int j = 0 ; j < coMax.getX() ; j++ )
-			if ( mArrayR[i][j] == 'G' )
-				mArray[i][j] = 'G' ;
+			if ( mArrayR[i][j] == 'G' )    // 當R路徑這格是G時
+				mArray[i][j] = 'G' ;   // V路徑這格也該是G
 	
 } //GetGBack
 
@@ -178,15 +178,15 @@ bool Maze::Load( string fileName ){
 
 bool Maze::SolveMaze( CoXY pt, int &numGoal ) {
 	
-	if ( !pt.inRange( coMax ) )
+	if ( !pt.inRange( coMax ) )    // 當下一格超出迷宮時，不做事
 		return false ;
-	else if ( mArray[pt.getY()][pt.getX()] == 'G' ) {
+	else if ( mArray[pt.getY()][pt.getX()] == 'G' ) {    // 當下一格是G時
 		
-		numGoal-- ;
+		numGoal-- ;   // 找到一個目標了，所以要找的目標數減一
 			
-		mArray[pt.getY()][pt.getX()] = 'V' ;
+		mArray[pt.getY()][pt.getX()] = 'V' ;   // 走上這格並標記
 		
-		if ( numGoal > 0 ) 	
+		if ( numGoal > 0 )   // 當還要找目標時，繼續走
 			SolveMaze( pt.nextXY( Right ), numGoal ) ;
 		if ( numGoal > 0 ) 
 			SolveMaze( pt.nextXY( Down ), numGoal ) ;
@@ -195,20 +195,21 @@ bool Maze::SolveMaze( CoXY pt, int &numGoal ) {
 		if ( numGoal > 0 ) 
 			SolveMaze( pt.nextXY( Up ), numGoal ) ;
 				
-		return true ;
+		return true ;   // 有找到目標就回傳true
 		
 	} // else if
-	else if ( mArray[pt.getY()][pt.getX()] == 'E' ) {
+	else if ( mArray[pt.getY()][pt.getX()] == 'E' ) {    // 當下一格是E時
 		
-		mArray[pt.getY()][pt.getX()] = 'V' ;
-		bool success = false ;
+		mArray[pt.getY()][pt.getX()] = 'V' ;    // 走上去並標記
+		bool success = false ;     // 只要之後有一條回傳true，就表示有找到目標G
 		
 		if ( numGoal > 0 )
 			if ( SolveMaze( pt.nextXY( Right ), numGoal ) ) {
-				mArrayR[pt.getY()][pt.getX()] = 'R' ; 
+				// 如果SolveMaze回傳true，則這條是正確路徑的一格，標為R
+				mArrayR[pt.getY()][pt.getX()] = 'R' ;  
 				success = true ;
 			} // if
-		if ( numGoal > 0 )
+		if ( numGoal > 0 )   // 因為每一條路都可能找到目標G，所以走每條路前都要確認是否還要找G
 			if ( SolveMaze( pt.nextXY( Down ), numGoal ) ) {
 				mArrayR[pt.getY()][pt.getX()] = 'R' ; 
 				success = true ;
@@ -256,7 +257,7 @@ int main() {
 	Maze maze ;
 	int cmd = -1 ;
 	cout << "(1)One Goal\n(2)More Goals\n(0)Exit\nChoose a command: " ;
-	cmd = GetInput() ;
+	cmd = GetInput() ;   // cmd讓你選要執行哪個任務
 	while ( cmd != 0 ) {
 	
 		if ( cmd == 1 || cmd == 2 ) {
@@ -278,16 +279,16 @@ int main() {
 			CoXY pt(0, 0) ;
 	
 			if ( maze.SolveMaze( pt, numGoal ) ) {
-				maze.GetGBack() ;
-				maze.Print() ;
-				if ( numGoal == 0 ) {
+				maze.GetGBack() ;   // 把走迷宮時擦掉的G找回來
+				maze.Print() ;    // 印出V路徑
+				if ( numGoal == 0 ) {    // 如果找到的目標數是對的
 					cout << "\n" ;
-					maze.PrintR() ;
+					maze.PrintR() ;   // 印出R路徑
 				} // if
 			} // if
-			else { 
-				maze.GetGBack() ;
-				maze.Print() ;
+			else {     // 如果一個G都沒找到
+				maze.GetGBack() ;    
+				maze.Print() ;   // 印出V路徑
 			} // else 
 		
 		} // if
