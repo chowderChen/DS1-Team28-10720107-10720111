@@ -185,6 +185,7 @@ bool Maze::SolveMaze( CoXY pt, int &numGoal ) {
 		numGoal-- ;   // 找到一個目標了，所以要找的目標數減一
 			
 		mArray[pt.getY()][pt.getX()] = 'V' ;   // 走上這格並標記
+		// G可以在跑完迷宮後用GetRBack()來取回
 		
 		if ( numGoal > 0 )   // 當還要找目標時，繼續走
 			SolveMaze( pt.nextXY( Right ), numGoal ) ;
