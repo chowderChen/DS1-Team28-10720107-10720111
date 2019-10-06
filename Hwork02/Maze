@@ -94,9 +94,20 @@ class Maze {
 	void Print() ;
 	void PrintR() ;
 	
+	void GetGBack() ;
+	
 	bool SolveMaze( CoXY pt, int &numGoal ) ;
 	
 }; // class Maze
+
+void Maze::GetGBack() {
+	
+	for ( int i = 0 ; i < coMax.getY() ; i++ )
+		for ( int j = 0 ; j < coMax.getX() ; j++ )
+			if ( mArrayR[i][j] == 'G' )
+				mArray[i][j] = 'G' ;
+	
+} //GetGBack
 
 void Maze::Print() {
 	
@@ -171,7 +182,6 @@ bool Maze::SolveMaze( CoXY pt, int &numGoal ) {
 		return false ;
 	else if ( mArray[pt.getY()][pt.getX()] == 'G' ) {
 		
-		cout << "It's G!\n" ;
 		numGoal-- ;
 			
 		mArray[pt.getY()][pt.getX()] = 'V' ;
@@ -184,10 +194,7 @@ bool Maze::SolveMaze( CoXY pt, int &numGoal ) {
 			SolveMaze( pt.nextXY( Left ), numGoal ) ;
 		if ( numGoal > 0 ) 
 			SolveMaze( pt.nextXY( Up ), numGoal ) ;
-			
-		mArray[pt.getY()][pt.getX()] = 'G' ;
 				
-			
 		return true ;
 		
 	} // else if
@@ -225,44 +232,73 @@ bool Maze::SolveMaze( CoXY pt, int &numGoal ) {
 	
 } // SolveMaze
 
+int GetInput() {
+	// 取得用戶輸入，以確保格式 
+	string input ; 
+	cin >> input ;
+	for ( int i = 0 ; i < input.size() ; i++ )
+		if ( !isdigit( input[i] ) ) {
+			cout << "格式錯誤，請輸入一個不為負的整數: " ;
+			cin >>  input ;
+			i = 0 ;
+		} // if
+	
+	int inputInt = 0 ;
+	for ( int i = 0 ; i < input.size() ; i++ )
+		inputInt = inputInt * 10 + input[i] - '0' ;
+		
+	return inputInt ;
+	
+} // GetInput()
+
 int main() {
 	
 	Maze maze ;
 	int cmd = -1 ;
 	cout << "(1)One Goal\n(2)More Goals\n(0)Exit\nChoose a command: " ;
-	cin >> cmd ;
+	cmd = GetInput() ;
 	while ( cmd != 0 ) {
 	
-		string fileName ;
-		cout << "要讀哪個檔: " ;
-		cin >> fileName ; 
-		while ( !maze.Load( fileName ) ) {
-			cout << "Not working, try again: " ;
-			cin >> fileName ;
-		} // while
+		if ( cmd == 1 || cmd == 2 ) {
+		
+			string fileName ;
+			cout << "要讀哪個檔: " ;
+			cin >> fileName ; 
+			while ( !maze.Load( fileName ) ) {
+				cout << "Not working, try again: " ;
+				cin >> fileName ;
+			} // while
 	
-		int numGoal = 1 ;
-		if ( cmd == 2 ) {
-			cout << "要找幾個Goal: " ;
-			cin >> numGoal ;
+			int numGoal = 1 ;
+			if ( cmd == 2 ) {
+				cout << "要找幾個Goal: " ;
+				numGoal = GetInput() ;
+			} // if
+	
+			CoXY pt(0, 0) ;
+	
+			if ( maze.SolveMaze( pt, numGoal ) ) {
+				maze.GetGBack() ;
+				maze.Print() ;
+				if ( numGoal == 0 ) {
+					cout << "\n" ;
+					maze.PrintR() ;
+				} // if
+			} // if
+			else { 
+				maze.GetGBack() ;
+				maze.Print() ;
+			} // else 
+		
 		} // if
-	
-		CoXY pt(0, 0) ;
-	
-		if ( maze.SolveMaze( pt, numGoal ) ) {
-			maze.Print() ;
-			cout << "\n" ;
-			maze.PrintR() ;
-			cout << "Success\n\n" ;
-		} // if
-		else { 
-			maze.Print() ;
-			cout << "Fail\n\n" ;
-		} // else 
+		else 
+			cout << "Incorrect command.\n" ;
 		
 		cout << "(1)One Goal\n(2)More Goals\n(0)Exit\nChoose a command: " ;
-		cin >> cmd ; 
+		cmd = GetInput() ; 
 	
 	} // while
+	
+	cout << "See you~" ;
 	
 } // main
