@@ -94,7 +94,7 @@ class Maze {
 	void Print() ;    // 印出V路徑
 	void PrintR() ;   // 印出R路徑
 	
-	void GetGBack() ;   // 把V路徑被蓋掉的R找回來
+	void GetGBack() ;   // 把V路徑被蓋掉的G找回來
 	
 	bool SolveMaze( CoXY pt, int &numGoal ) ;   // 跑迷宮
 	
