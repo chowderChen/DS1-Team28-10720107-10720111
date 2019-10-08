@@ -1,0 +1,3 @@
+Q.要怎麼delete掉空間?
+A.destructor(影片:複習深層複製建構子8:20)
+Q.要不要做isEmpty(), Top()?
