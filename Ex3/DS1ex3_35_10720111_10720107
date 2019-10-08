@@ -4,7 +4,31 @@
 
 using namespace std ;
 
+class Stack {
+	
+	
+	
+	public:
+		
+	void Push() ;
+	void Pop() ;
+	
+}; // class Stack
+
+void Stack::Push() {
+	
+	
+	
+} // Push()
+
+void Stack::Pop() {
+	
+	
+	
+} // Pop()
+
 int main() {
+
 
 
   return 0 ;
