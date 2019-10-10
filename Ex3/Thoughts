@@ -1,0 +1,22 @@
+int ReadInput() ;
+
+main裡面:
+int cmd = Readinput() ;
+if ( cmd == 0 ) {
+  cout << "全都沒錯" ;
+} // if
+else if ( cmd == 1 ) {
+  cout << "非合法字元" ;
+} // else if
+else if ( cmd == 2 ) {
+  cout << "缺少或多於括號" ;
+} // else if
+else if ( cmd == 3 ) {
+  cout << "非中序運算式" ;
+} // else if
+
+
+int List :: ReadInput() {
+  
+
+} // ReadInput()
