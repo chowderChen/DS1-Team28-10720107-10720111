@@ -13,7 +13,8 @@ class Stack {
 	void Push() ;
 	void Pop() ;
 	
-        struct Data ;
+	
+    struct Data ;
 	Data * top = NULL ;
 	
 	
@@ -21,15 +22,17 @@ class Stack {
 
 struct Stack::Data {
   char ch ;
-  Data * next ;
+  Data * next = NULL ;
+  Data * front = NULL ;
 } ;
 
 void Stack::Push( char ch ) {
-
+  Data * temp ;
   temp = new Data ;
   temp->ch = ch ;
   if ( top != NULL ) {
     top->next = temp ;
+    temp->front = top ;
     top = temp ;
   } // if
   else {
@@ -39,8 +42,8 @@ void Stack::Push( char ch ) {
 } // Push()
 
 void Stack::Pop() {
-	
-	
+	top = top->front ;
+	delete temp ;
 	
 } // Pop()
 
