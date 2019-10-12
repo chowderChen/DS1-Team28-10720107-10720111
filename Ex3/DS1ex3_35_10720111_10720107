@@ -43,7 +43,7 @@ void Stack::Push( char ch ) {
 
 void Stack::Pop() {
 	top = top->front ;
-	delete temp ;
+	delete top->next ;
 	
 } // Pop()
 
