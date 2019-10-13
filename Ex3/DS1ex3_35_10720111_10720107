@@ -1,12 +1,31 @@
 // 10720111 陳少暉  10720107 陳丕中
+
 #include<stdio.h> 
 #include<iostream>
-#include<string.h>
+#include<string.h> 
 
 using namespace std ;
 
-class Stack {
+int GetInput() {
+	// 取得用戶輸入，以確保格式 
+	string input ; 
+	cin >> input ;
+	for ( int i = 0 ; i < input.size() ; i++ )
+		if ( !isdigit( input[i] ) ) {
+			cout << "格式錯誤，請輸入一個不為負的整數: " ;
+			cin >>  input ;
+			i = 0 ;
+		} // if
 	
+	int inputInt = 0 ;
+	for ( int i = 0 ; i < input.size() ; i++ )
+		inputInt = inputInt * 10 + input[i] - '0' ;
+		
+	return inputInt ;
+	
+} // GetInput()
+
+class Stack {	
 	
 	
 	public:
@@ -20,7 +39,6 @@ class Stack {
 	
     struct Data ;
 	Data * top = NULL ;
-	
 	
 }; // class Stack
 
@@ -70,51 +88,98 @@ bool Stack::RightEquation() {
 
 
 
-int Stack::ReadInput() {
-	char input ;
-	cin >> input ;
-	while ( input != '\n' ) {
-		Push( input ) ;
-		cin >> input ;
-	} // while
+bool IsLegalEx( string ex ) {
 	
-	Data * walk = NULL ;
-	walk = top ;
-	while ( walk != NULL ) {
-		if ( NotNum( walk->ch ) ) { // if 此ch為非合法字元 
-			return 1 ;
-		} // if 此ch為非合法字元 
-		else if ( walk->ch == ')' || walk->ch == '(' ) { // else if 此ch為括號 
-			if ( !FindPair() ) {
-				return 2 ;
-			} // if 找有沒有成對的括號 
-		} // else if 此ch為括號 
-		else if ( !RightEquation() ) { // else if 這個非正確式子 
-			return 3 ;
-		} //else if 這個非正確式子 
+	int numOpenP = 0, numCloseP = 0 ;
+	bool wasOprator = false, wasOpenP = false, wasCloseP = false ;
+	for ( int i = 0 ; i < ex.size() ; i++ ) {
 		
-	} // while
+		if ( ex[i] == '+' || ex[i] == '-' || ex[i] == '*' || ex[i] == '/' ) {
+			if ( wasOprator ) {
+				cout << "extra operator\n" ;
+				return false ;
+			}
+			else if ( wasOpenP ) {
+				cout << "not infix in p\n" ;
+				return false ;
+			}	
+			wasOprator = true ;
+			wasOpenP = false ;
+			wasCloseP = false ;
+		} // if
+		else if ( '0' <= ex[i] && ex[i] <= '9' ) {
+			if ( wasCloseP ) {
+				cout << "extra operand\n" ;
+				return false ;
+			}
+			wasOprator = false ;
+			wasOpenP = false ;
+			wasCloseP = false ;
+		} // else if
+		else if ( ex[i] == ')' ) {
+			if ( wasOpenP || wasOprator ) {
+				cout << "not infix in p\n" ;
+				return false ;
+			}	
+			
+			if ( numOpenP > numCloseP )
+				numCloseP ++ ;
+			else {
+				cout << "extra close p\n" ;
+				return false ;
+			} // else		
+			wasOprator = false ;
+			wasOpenP = false ;
+			wasCloseP = true ;
+		} // else if
+		else if ( ex[i] == '(' ) {
+			numOpenP ++ ;
+			wasOprator = false ;
+			wasOpenP = true ;
+			wasCloseP = false ;
+		} // else if
+		else if ( ex[i] == ' ' )
+			;
+		else {
+			cout << ex[i] << " is a illegal char\n" ;
+			return false ;
+		}
+			
+	} // for	
 	
-	return 0 ; // 出while代表它沒出錯 
-} // ReadInput
+	if ( numOpenP > numCloseP ) {
+		cout << "extra open p\n" ;
+		return false ;
+	} // if 
+	else if ( numOpenP < numCloseP ) {	
+		cout << "extra close p\n" ;
+		return false ;	
+	} // else if
+	
+	return true ;
+	
+} // IsLegalEx()
 
 int main() {
-  int cmd = ReadInput() ;
-  if ( cmd == 0 ) {
-    cout << "全都沒錯" ;
-  } // if
-  else if ( cmd == 1 ) {
-    cout << "非合法字元" ;
-  } // else if
-  else if ( cmd == 2 ) {
-    cout << "缺少或多於括號" ;
-  } // else if
-  else if ( cmd == 3 ) {
-    cout << "非中序運算式" ;
-  } // else if
-
-
-
-  return 0 ;
+  
+	int cmd = -1 ;
+	cout << "1為執行\n0為退出\n請輸入指令:" ;
+	cin >> cmd ;
+	string temp ;
+	while ( cmd != 0 ) {
+	
+		getline( cin, temp ) ;   // 除去\n 
+		string ex ;
+		cout << "輸入式子:" ;
+		getline( cin, ex ) ;
+		if ( IsLegalEx( ex ) )   // 判斷式子是否合法 
+			cout << "Nice ex\n" ;
+			
+		cout << "1為執行\n0為退出\n請輸入指令:" ; 
+		cin >> cmd ;
+		
+	} // while 
+	
+  	return 0 ;
 
 } // main()
