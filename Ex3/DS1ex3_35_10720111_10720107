@@ -1,6 +1,7 @@
 // 10720111 陳少暉  10720107 陳丕中
-
+#include<stdio.h> 
 #include<iostream>
+#include<string.h>
 
 using namespace std ;
 
@@ -10,9 +11,12 @@ class Stack {
 	
 	public:
 		
-	void Push() ;
-	void Pop() ;
-	
+	void Push( char ch ) ;
+	void Pop( ) ;
+	int ReadInput() ;
+	bool NotNum( char ch ) ; // 判斷此數是否為num 
+	int FindPair() ; // 找有沒有成對的括號 
+	bool RightEquation() ; // 看此式是否為運算式 
 	
     struct Data ;
 	Data * top = NULL ;
@@ -47,7 +51,67 @@ void Stack::Pop() {
 	
 } // Pop()
 
+bool Stack::NotNum( char ch ) {
+	
+	if ( '0' <= ch && ch <= '9' ) {
+		return false ;
+	} // if
+	else{
+		return true ;
+	} // else
+	
+} // NotNum() 用來判斷是不是數字 
+
+int Stack::FindPair() {
+} // FindPair()
+
+bool Stack::RightEquation() {
+} // RightEquation()
+
+
+
+int Stack::ReadInput() {
+	char input ;
+	cin >> input ;
+	while ( input != '\n' ) {
+		Push( input ) ;
+		cin >> input ;
+	} // while
+	
+	Data * walk = NULL ;
+	walk = top ;
+	while ( walk != NULL ) {
+		if ( NotNum( walk->ch ) ) { // if 此ch為非合法字元 
+			return 1 ;
+		} // if 此ch為非合法字元 
+		else if ( walk->ch == ')' || walk->ch == '(' ) { // else if 此ch為括號 
+			if ( !FindPair() ) {
+				return 2 ;
+			} // if 找有沒有成對的括號 
+		} // else if 此ch為括號 
+		else if ( !RightEquation() ) { // else if 這個非正確式子 
+			return 3 ;
+		} //else if 這個非正確式子 
+		
+	} // while
+	
+	return 0 ; // 出while代表它沒出錯 
+} // ReadInput
+
 int main() {
+  int cmd = ReadInput() ;
+  if ( cmd == 0 ) {
+    cout << "全都沒錯" ;
+  } // if
+  else if ( cmd == 1 ) {
+    cout << "非合法字元" ;
+  } // else if
+  else if ( cmd == 2 ) {
+    cout << "缺少或多於括號" ;
+  } // else if
+  else if ( cmd == 3 ) {
+    cout << "非中序運算式" ;
+  } // else if
 
 
 
