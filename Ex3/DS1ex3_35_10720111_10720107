@@ -15,7 +15,7 @@ class Stack {
 	void Pop( ) ;
 	int ReadInput() ;
 	bool NotNum( char ch ) ; // 判斷此數是否為num 
-	int FindPair() ; // 找有沒有成對的括號 
+	bool FindPair() ; // 找有沒有成對的括號 
 	bool RightEquation() ; // 看此式是否為運算式 
 	
     struct Data ;
@@ -62,7 +62,7 @@ bool Stack::NotNum( char ch ) {
 	
 } // NotNum() 用來判斷是不是數字 
 
-int Stack::FindPair() {
+bool Stack::FindPair() {
 } // FindPair()
 
 bool Stack::RightEquation() {
