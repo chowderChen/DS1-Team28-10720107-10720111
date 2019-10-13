@@ -90,16 +90,16 @@ bool Stack::RightEquation() {
 
 bool IsLegalEx( string ex ) {
 	
-	int numOpenP = 0, numCloseP = 0 ;
+	int numOpenP = 0, numCloseP = 0 ;   // 記錄這式子有幾個'('和')' 
 	bool wasOprator = false, wasOpenP = false, wasCloseP = false ;
 	for ( int i = 0 ; i < ex.size() ; i++ ) {
 		
 		if ( ex[i] == '+' || ex[i] == '-' || ex[i] == '*' || ex[i] == '/' ) {
-			if ( wasOprator ) {
+			if ( wasOprator ) {   // 如果運算符號前是運算符號 
 				cout << "extra operator\n" ;
 				return false ;
 			}
-			else if ( wasOpenP ) {
+			else if ( wasOpenP ) {   // 如果運算符號前是'(' 
 				cout << "not infix in p\n" ;
 				return false ;
 			}	
@@ -108,7 +108,7 @@ bool IsLegalEx( string ex ) {
 			wasCloseP = false ;
 		} // if
 		else if ( '0' <= ex[i] && ex[i] <= '9' ) {
-			if ( wasCloseP ) {
+			if ( wasCloseP ) {  // 如果數字前是')' 
 				cout << "extra operand\n" ;
 				return false ;
 			}
@@ -118,13 +118,15 @@ bool IsLegalEx( string ex ) {
 		} // else if
 		else if ( ex[i] == ')' ) {
 			if ( wasOpenP || wasOprator ) {
+				// 如果)前面是(或運算符號，就代表括號內的式子不為中序 
 				cout << "not infix in p\n" ;
 				return false ;
 			}	
 			
-			if ( numOpenP > numCloseP )
+			if ( numOpenP > numCloseP ) 
+				// 如果前面記錄到'('的數量大於')'，正常記錄')'數量增加 
 				numCloseP ++ ;
-			else {
+			else {   // 如為非，表示這式子多了')' 
 				cout << "extra close p\n" ;
 				return false ;
 			} // else		
@@ -133,21 +135,22 @@ bool IsLegalEx( string ex ) {
 			wasCloseP = true ;
 		} // else if
 		else if ( ex[i] == '(' ) {
-			numOpenP ++ ;
+			numOpenP ++ ;  
 			wasOprator = false ;
 			wasOpenP = true ;
 			wasCloseP = false ;
 		} // else if
 		else if ( ex[i] == ' ' )
 			;
-		else {
+		else {    // 不是+-*/()也不是數字也不是空格，是非法字元 
 			cout << ex[i] << " is a illegal char\n" ;
 			return false ;
 		}
 			
 	} // for	
 	
-	if ( numOpenP > numCloseP ) {
+	if ( numOpenP > numCloseP ) {   
+		// 如果式子中'('的數量大於')'，表示有多的'(' 
 		cout << "extra open p\n" ;
 		return false ;
 	} // if 
