@@ -91,7 +91,7 @@ bool Stack::RightEquation() {
 bool IsLegalEx( string ex ) {
 	
 	int numOpenP = 0, numCloseP = 0 ;   // 記錄這式子有幾個'('和')' 
-	bool wasOprator = false, wasOpenP = false, wasCloseP = false ;
+	bool wasOprator = false, wasOpenP = false, wasCloseP = false ;   // 記錄前一個是運算符號、'('還是')'
 	for ( int i = 0 ; i < ex.size() ; i++ ) {
 		
 		if ( ex[i] == '+' || ex[i] == '-' || ex[i] == '*' || ex[i] == '/' ) {
