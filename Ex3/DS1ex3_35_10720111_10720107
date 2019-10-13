@@ -27,82 +27,69 @@ int GetInput() {
 
 class Stack {	
 	
+	struct Data ;
+	Data* top ;
+	
+	Stack() {
+		top = NULL ;
+	} // Stack
 	
 	public:
 		
 	void Push( char ch ) ;
 	void Pop( ) ;
-	int ReadInput() ;
-	bool NotNum( char ch ) ; // 判斷此數是否為num 
-	bool FindPair() ; // 找有沒有成對的括號 
-	bool RightEquation() ; // 看此式是否為運算式 
-	
-    struct Data ;
-	Data * top = NULL ;
 	
 }; // class Stack
 
 struct Stack::Data {
+	
   char ch ;
   Data * next = NULL ;
   Data * front = NULL ;
+  
 } ;
 
 void Stack::Push( char ch ) {
-  Data * temp ;
-  temp = new Data ;
-  temp->ch = ch ;
-  if ( top != NULL ) {
-    top->next = temp ;
-    temp->front = top ;
-    top = temp ;
-  } // if
-  else {
-    top = temp ;
-  } // else
+	
+	Data * temp ;
+	temp = new Data ;
+	temp->ch = ch ;
+	
+	if ( top != NULL ) {
+    	top->next = temp ;
+    	temp->front = top ;
+   	 	top = temp ;
+  	} // if
+ 	else {
+    	top = temp ;
+	} // else
   
 } // Push()
 
 void Stack::Pop() {
+	
 	top = top->front ;
 	delete top->next ;
 	
 } // Pop()
-
-bool Stack::NotNum( char ch ) {
-	
-	if ( '0' <= ch && ch <= '9' ) {
-		return false ;
-	} // if
-	else{
-		return true ;
-	} // else
-	
-} // NotNum() 用來判斷是不是數字 
-
-bool Stack::FindPair() {
-} // FindPair()
-
-bool Stack::RightEquation() {
-} // RightEquation()
 
 
 
 bool IsLegalEx( string ex ) {
 	
 	int numOpenP = 0, numCloseP = 0 ;   // 記錄這式子有幾個'('和')' 
-	bool wasOprator = false, wasOpenP = false, wasCloseP = false ;   // 記錄前一個是運算符號、'('還是')'
+	bool wasOprator = false, wasOpenP = false, wasCloseP = false ;
 	for ( int i = 0 ; i < ex.size() ; i++ ) {
 		
 		if ( ex[i] == '+' || ex[i] == '-' || ex[i] == '*' || ex[i] == '/' ) {
 			if ( wasOprator ) {   // 如果運算符號前是運算符號 
 				cout << "extra operator\n" ;
 				return false ;
-			}
+			} // if
 			else if ( wasOpenP ) {   // 如果運算符號前是'(' 
 				cout << "not infix in p\n" ;
 				return false ;
-			}	
+			} // else if
 			wasOprator = true ;
 			wasOpenP = false ;
 			wasCloseP = false ;
@@ -111,7 +98,7 @@ bool IsLegalEx( string ex ) {
 			if ( wasCloseP ) {  // 如果數字前是')' 
 				cout << "extra operand\n" ;
 				return false ;
-			}
+			} 
 			wasOprator = false ;
 			wasOpenP = false ;
 			wasCloseP = false ;
