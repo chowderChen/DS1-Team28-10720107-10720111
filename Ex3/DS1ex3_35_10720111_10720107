@@ -25,39 +25,45 @@ int GetInput() {
 	
 } // GetInput()
 
-class Stack {	
+struct Data {
 	
-	struct Data ;
-	Data* top ;
-	
-	Stack() {
-		top = NULL ;
-	} // Stack
-	
-	public:
-		
-	void Push( char ch ) ;
-	void Pop( ) ;
-	
-}; // class Stack
-
-struct Stack::Data {
-	
+  string str ;
   char ch ;
-  Data * next = NULL ;
-  Data * front = NULL ;
+  Data * next ;
   
 } ;
 
+class Stack {	
+	
+	Data* top ;
+	
+	public:
+		
+	Stack() {
+		top = NULL ;
+	} // Stack	
+	~Stack() {
+		while( !IsEmpty() )
+			Pop() ;
+		delete top ;
+	} // ~Stack
+		
+	void Push( char ch ) ;
+	Data* GetTop() ;
+	void Pop() ;
+	void ShowTop() ;
+	bool IsEmpty() ;
+	
+}; // class Stack
+
 void Stack::Push( char ch ) {
 	
-	Data * temp ;
-	temp = new Data ;
+	Data* temp = new Data() ;
 	temp->ch = ch ;
+	temp->next = NULL ;
 	
-	if ( top != NULL ) {
-    	top->next = temp ;
-    	temp->front = top ;
+	if ( !IsEmpty() ) {
+    	temp->next = top ;
    	 	top = temp ;
   	} // if
  	else {
@@ -66,13 +72,105 @@ void Stack::Push( char ch ) {
   
 } // Push()
 
-void Stack::Pop() {
+Data* Stack::GetTop() {
 	
-	top = top->front ;
-	delete top->next ;
+	if ( IsEmpty() )
+		cout << "There is nothing can be get.\n" ;
+	else {
+		Data* temp = new Data() ;
+		temp = top ;
+		top = top->next ;
+		return temp ;
+	} // else
 	
 } // Pop()
 
+void Stack::Pop() {
+	
+	if ( IsEmpty() )
+		cout << "There is nothing can be pop.\n" ;
+	else {
+		Data* temp = new Data() ;
+		temp = top ;
+		top = top->next ;
+		delete temp ;
+	} // else
+	
+} // Pop()
+
+void Stack::ShowTop() {
+	
+	if ( IsEmpty() )
+		cout << "There is nothing can be show\n" ;
+	else
+		cout << top->ch << "\n" ;
+	
+} // ShowTop
+
+bool Stack::IsEmpty() {
+	
+	if ( top == NULL )
+		return true ;
+		
+	return false ;
+	
+} // IsEmpty()
+
+class List {
+	
+	Data* head ;
+	int total ;
+	
+	public:
+		
+	List() {
+		head = NULL ;
+		total = 0 ;
+	} // List
+	~List() {
+	// remove or something			
+		delete head ;
+	} // ~List
+	
+	void Add( string str ) ;
+	bool IsEmpty() ;
+	void Remove( int p ) ;
+};
+
+void List::Add( string str ) {
+	
+	Data* temp = new Data() ;
+	temp->str = str ;
+	temp->next = NULL ;
+	if ( IsEmpty() )
+		head = temp ;
+	else {
+		Data* walk = new Data() ;
+		walk = head ;
+		while ( walk->next != NULL )
+			walk = walk->next ;
+			
+		walk->next = temp ;
+	} // else 
+	total ++ ;
+	
+} // Add()
+
+bool List::IsEmpty() {
+	
+	if( head == NULL )
+		return true ;
+		
+	return false ;
+	
+} // IsEmpty()
+
+void List::Remove( int p ) {
+	
+	if ( 0 <= p && p < total )
+		;
+	
+} // Delete()
 
 
 bool IsLegalEx( string ex ) {
@@ -150,6 +248,23 @@ bool IsLegalEx( string ex ) {
 	
 } // IsLegalEx()
 
+List InfixToPostfix( string ex ) {
+	// stack只需要裝運算符號(char)
+	// List有數字有符號，struct Data該怎麼做 
+	Stack stack ;
+	for ( int i = 0 ; i < ex.size() ; i ++ ) {
+		if ( '0' <= ex[i] && ex[i] <= '9' )
+			;
+		else if ( ex[i] == '+' || ex[i] == '-' || ex[i] == '*' || ex[i] == '/' )
+			;
+		else if ( ex[i] == '(' )
+			;
+		else if ( ex[i] == ')' )
+			;
+	} // for
+	
+} // InfixToPostfix
+
 int main() {
   
 	int cmd = -1 ;
@@ -162,8 +277,11 @@ int main() {
 		string ex ;
 		cout << "輸入式子:" ;
 		getline( cin, ex ) ;
-		if ( IsLegalEx( ex ) )   // 判斷式子是否合法 
-			cout << "Nice ex\n" ;
+		
+		if ( IsLegalEx( ex ) ) {   // 判斷式子是否合法 
+			List postfixEx = InfixToPostfix( ex ) ;
+		} // if
+			
 			
 		cout << "1為執行\n0為退出\n請輸入指令:" ; 
 		cin >> cmd ;
