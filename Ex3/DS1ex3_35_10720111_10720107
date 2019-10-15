@@ -1,14 +1,14 @@
 // 10720111 陳少暉  10720107 陳丕中
 
-#include<stdio.h> 
+#include<stdio.h>
 #include<iostream>
-#include<string.h> 
+#include<string.h>
 
 using namespace std ;
 
 int GetInput() {
-	// 取得用戶輸入，以確保格式 
-	string input ; 
+	// 取得用戶輸入，以確保格式
+	string input ;
 	cin >> input ;
 	for ( int i = 0 ; i < input.size() ; i++ )
 		if ( !isdigit( input[i] ) ) {
@@ -16,52 +16,52 @@ int GetInput() {
 			cin >>  input ;
 			i = 0 ;
 		} // if
-	
+
 	int inputInt = 0 ;
 	for ( int i = 0 ; i < input.size() ; i++ )
 		inputInt = inputInt * 10 + input[i] - '0' ;
-		
+
 	return inputInt ;
-	
+
 } // GetInput()
 
 struct Data {
-	
+
   string str ;
   char ch ;
   Data * next ;
-  
+
 } ;
 
-class Stack {	
-	
+class Stack {
+
 	Data* top ;
-	
+
 	public:
-		
+
 	Stack() {
 		top = NULL ;
-	} // Stack	
+	} // Stack
 	~Stack() {
 		while( !IsEmpty() )
 			Pop() ;
 		delete top ;
 	} // ~Stack
-		
+
 	void Push( char ch ) ;
 	Data* GetTop() ;
 	void Pop() ;
-	void ShowTop() ;
+	char ShowTop() ;
 	bool IsEmpty() ;
-	
+
 }; // class Stack
 
 void Stack::Push( char ch ) {
-	
+
 	Data* temp = new Data() ;
 	temp->ch = ch ;
 	temp->next = NULL ;
-	
+
 	if ( !IsEmpty() ) {
     	temp->next = top ;
    	 	top = temp ;
@@ -69,11 +69,11 @@ void Stack::Push( char ch ) {
  	else {
     	top = temp ;
 	} // else
-  
+
 } // Push()
 
 Data* Stack::GetTop() {
-	
+
 	if ( IsEmpty() )
 		cout << "There is nothing can be get.\n" ;
 	else {
@@ -82,11 +82,13 @@ Data* Stack::GetTop() {
 		top = top->next ;
 		return temp ;
 	} // else
-	
+
+	return NULL ;
+
 } // Pop()
 
 void Stack::Pop() {
-	
+
 	if ( IsEmpty() )
 		cout << "There is nothing can be pop.\n" ;
 	else {
@@ -95,50 +97,53 @@ void Stack::Pop() {
 		top = top->next ;
 		delete temp ;
 	} // else
-	
+
 } // Pop()
 
-void Stack::ShowTop() {
-	
+char Stack::ShowTop() {
+
 	if ( IsEmpty() )
 		cout << "There is nothing can be show\n" ;
 	else
-		cout << top->ch << "\n" ;
-	
+		return top->ch ;
+
+    return '\0' ;
+
 } // ShowTop
 
 bool Stack::IsEmpty() {
-	
+
 	if ( top == NULL )
 		return true ;
-		
+
 	return false ;
-	
+
 } // IsEmpty()
 
 class List {
-	
+
 	Data* head ;
 	int total ;
-	
+
 	public:
-		
+
 	List() {
 		head = NULL ;
 		total = 0 ;
 	} // List
 	~List() {
-	// remove or something			
+	// remove or something
 		delete head ;
 	} // ~List
-	
+
 	void Add( string str ) ;
 	bool IsEmpty() ;
 	void Remove( int p ) ;
+	void PrintList() ;
 };
 
 void List::Add( string str ) {
-	
+
 	Data* temp = new Data() ;
 	temp->str = str ;
 	temp->next = NULL ;
@@ -149,42 +154,55 @@ void List::Add( string str ) {
 		walk = head ;
 		while ( walk->next != NULL )
 			walk = walk->next ;
-			
+
 		walk->next = temp ;
-	} // else 
+	} // else
 	total ++ ;
-	
+
 } // Add()
 
 bool List::IsEmpty() {
-	
+
 	if( head == NULL )
 		return true ;
-		
+
 	return false ;
-	
+
 } // IsEmpty()
 
 void List::Remove( int p ) {
-	
+
 	if ( 0 <= p && p < total )
 		;
-	
+
 } // Delete()
+
+void List::PrintList() {
+
+    Data* walk = head ;
+    while ( walk != NULL ) {
+        cout << walk->str ;
+        if ( walk->next != NULL )
+            cout << ", " ;
+        walk = walk->next ;
+    } // while
+    cout << "\n" ;
+
+} // PrintList
 
 
 bool IsLegalEx( string ex ) {
-	
-	int numOpenP = 0, numCloseP = 0 ;   // 記錄這式子有幾個'('和')' 
+
+	int numOpenP = 0, numCloseP = 0 ;   // 記錄這式子有幾個'('和')'
 	bool wasOprator = false, wasOpenP = false, wasCloseP = false ;
 	for ( int i = 0 ; i < ex.size() ; i++ ) {
-		
+
 		if ( ex[i] == '+' || ex[i] == '-' || ex[i] == '*' || ex[i] == '/' ) {
-			if ( wasOprator ) {   // 如果運算符號前是運算符號 
+			if ( wasOprator ) {   // 如果運算符號前是運算符號
 				cout << "extra operator\n" ;
 				return false ;
 			} // if
-			else if ( wasOpenP ) {   // 如果運算符號前是'(' 
+			else if ( wasOpenP ) {   // 如果運算符號前是'('
 				cout << "not infix in p\n" ;
 				return false ;
 			} // else if
@@ -193,122 +211,152 @@ bool IsLegalEx( string ex ) {
 			wasCloseP = false ;
 		} // if
 		else if ( '0' <= ex[i] && ex[i] <= '9' ) {
-			if ( wasCloseP ) {  // 如果數字前是')' 
+			if ( wasCloseP ) {  // 如果數字前是')'
 				cout << "extra operand\n" ;
 				return false ;
-			} 
+			}
 			wasOprator = false ;
 			wasOpenP = false ;
 			wasCloseP = false ;
 		} // else if
 		else if ( ex[i] == ')' ) {
 			if ( wasOpenP || wasOprator ) {
-				// 如果)前面是(或運算符號，就代表括號內的式子不為中序 
+				// 如果)前面是(或運算符號，就代表括號內的式子不為中序
 				cout << "not infix in p\n" ;
 				return false ;
-			}	
-			
-			if ( numOpenP > numCloseP ) 
-				// 如果前面記錄到'('的數量大於')'，正常記錄')'數量增加 
+			}
+
+			if ( numOpenP > numCloseP )
+				// 如果前面記錄到'('的數量大於')'，正常記錄')'數量增加
 				numCloseP ++ ;
-			else {   // 如為非，表示這式子多了')' 
+			else {   // 如為非，表示這式子多了')'
 				cout << "extra close p\n" ;
 				return false ;
-			} // else		
+			} // else
 			wasOprator = false ;
 			wasOpenP = false ;
 			wasCloseP = true ;
 		} // else if
 		else if ( ex[i] == '(' ) {
-			numOpenP ++ ;  
+			numOpenP ++ ;
 			wasOprator = false ;
 			wasOpenP = true ;
 			wasCloseP = false ;
 		} // else if
 		else if ( ex[i] == ' ' )
 			;
-		else {    // 不是+-*/()也不是數字也不是空格，是非法字元 
+		else {    // 不是+-*/()也不是數字也不是空格，是非法字元
 			cout << ex[i] << " is a illegal char\n" ;
 			return false ;
 		}
-			
-	} // for	
-	
-	if ( numOpenP > numCloseP ) {   
-		// 如果式子中'('的數量大於')'，表示有多的'(' 
+
+	} // for
+
+	if ( numOpenP > numCloseP ) {
+		// 如果式子中'('的數量大於')'，表示有多的'('
 		cout << "extra open p\n" ;
 		return false ;
-	} // if 
-	else if ( numOpenP < numCloseP ) {	
+	} // if
+	else if ( numOpenP < numCloseP ) {
 		cout << "extra close p\n" ;
-		return false ;	
+		return false ;
 	} // else if
-	
+
 	return true ;
-	
+
 } // IsLegalEx()
 
-List InfixToPostfix( string ex ) {
+void InfixToPostfix( string ex, List& postfixEx ) {
 	// stack只需要裝運算符號(char)
-	// List有數字有符號，struct Data該怎麼做 
+	// List有數字有符號，struct Data該怎麼做
 	Stack stack ;
-	List postfixEx ;
 	string token ;
 	int i = 0 ;
 	while ( i < ex.size() ) {
-		
+
 		if ( '0' <= ex[i] && ex[i] <= '9' ) {
-			token = "" + ex[i] ;
+			token = ex[i] ;
 			i ++ ;
-			while ( ( '0' <= ex[i] && ex[i] <= '9' ) || ex[i] == ' ' ) {
+			while ( i < ex.size() && (( '0' <= ex[i] && ex[i] <= '9' ) || ex[i] == ' ' ) ) {
 				if ( ex[i] != ' ' )
 					token = token + ex[i] ;
-					
+
 				i ++ ;
 			} // while
-					
-			List.Add( token ) ;
+			postfixEx.Add( token ) ;
 			token = "" ;
 		} // if
-		else if ( ex[i] == '+' || ex[i] == '-' )
+		else if ( ex[i] == '+' || ex[i] == '-' ) {
+            while ( !stack.IsEmpty() && ( stack.ShowTop() != '\0' && stack.ShowTop() != '(' ) ) {
+                token = stack.GetTop()->ch ;
+                postfixEx.Add( token ) ;
+                token = "" ;
+            } // while
 			stack.Push( ex[i] );
-		else if ( ex[i] == '*' || ex[i] == '/' )
-		else if ( ex[i] == '(' )
-			;
-		else if ( ex[i] == ')' )
-			;
+			i ++ ;
+        } // else if
+		else if ( ex[i] == '*' || ex[i] == '/' ) {
+            while ( !stack.IsEmpty() && ( stack.ShowTop() == '*' || stack.ShowTop() == '/' ) ) {
+                token = stack.GetTop()->ch ;
+                postfixEx.Add( token ) ;
+                token = "" ;
+            } // while
+            stack.Push( ex[i] ) ;
+            i++ ;
+		} // else if
+		else if ( ex[i] == '(' ) {
+			stack.Push( ex[i] ) ;
+			i ++ ;
+		} // else if
+		else if ( ex[i] == ')' ) {
+			while ( stack.ShowTop() != '(' ) {
+                token = stack.GetTop()->ch ;
+                postfixEx.Add( token ) ;
+                token = "" ;
+            } // while
+
+            stack.Pop() ;  // pop '(' out
+            i ++ ;
+        } // else if
 		else if ( ex[i] == ' ' )
-			;
-			
+			i ++ ;
+
 	} // while
-	
-	return postfixEx ;
-	
+
+	while ( !stack.IsEmpty() ) {
+        token = stack.GetTop()->ch ;
+        postfixEx.Add( token ) ;
+        token = "" ;
+	} // while
+
 } // InfixToPostfix
 
 int main() {
-  
+
 	int cmd = -1 ;
 	cout << "1為執行\n0為退出\n請輸入指令:" ;
 	cin >> cmd ;
 	string temp ;
 	while ( cmd != 0 ) {
-	
-		getline( cin, temp ) ;   // 除去\n 
+
+		getline( cin, temp ) ;   // 除去\n
 		string ex ;
 		cout << "輸入式子:" ;
 		getline( cin, ex ) ;
-		
-		if ( IsLegalEx( ex ) ) {   // 判斷式子是否合法 
-			List postfixEx = InfixToPostfix( ex ) ;
+
+		if ( IsLegalEx( ex ) ) {   // 判斷式子是否合法
+            cout << "It's infix.\n" ;
+			List postfixEx ;
+			InfixToPostfix( ex, postfixEx ) ;
+			postfixEx.PrintList() ;
 		} // if
-			
-			
-		cout << "1為執行\n0為退出\n請輸入指令:" ; 
+
+
+		cout << "1為執行\n0為退出\n請輸入指令:" ;
 		cin >> cmd ;
-		
-	} // while 
-	
+
+	} // while
+
   	return 0 ;
 
 } // main()
