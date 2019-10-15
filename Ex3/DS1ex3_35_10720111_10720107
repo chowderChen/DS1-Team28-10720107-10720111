@@ -252,16 +252,37 @@ List InfixToPostfix( string ex ) {
 	// stack只需要裝運算符號(char)
 	// List有數字有符號，struct Data該怎麼做 
 	Stack stack ;
-	for ( int i = 0 ; i < ex.size() ; i ++ ) {
-		if ( '0' <= ex[i] && ex[i] <= '9' )
-			;
-		else if ( ex[i] == '+' || ex[i] == '-' || ex[i] == '*' || ex[i] == '/' )
-			;
+	List postfixEx ;
+	string token ;
+	int i = 0 ;
+	while ( i < ex.size() ) {
+		
+		if ( '0' <= ex[i] && ex[i] <= '9' ) {
+			token = "" + ex[i] ;
+			i ++ ;
+			while ( ( '0' <= ex[i] && ex[i] <= '9' ) || ex[i] == ' ' ) {
+				if ( ex[i] != ' ' )
+					token = token + ex[i] ;
+					
+				i ++ ;
+			} // while
+					
+			List.Add( token ) ;
+			token = "" ;
+		} // if
+		else if ( ex[i] == '+' || ex[i] == '-' )
+			stack.Push( ex[i] );
+		else if ( ex[i] == '*' || ex[i] == '/' )
 		else if ( ex[i] == '(' )
 			;
 		else if ( ex[i] == ')' )
 			;
-	} // for
+		else if ( ex[i] == ' ' )
+			;
+			
+	} // while
+	
+	return postfixEx ;
 	
 } // InfixToPostfix
 
