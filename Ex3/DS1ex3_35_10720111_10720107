@@ -57,7 +57,7 @@ class Stack {
 }; // class Stack
 
 void Stack::Push( char ch ) {
-
+	// 把東西放進stack 
 	Data* temp = new Data() ;
 	temp->ch = ch ;
 	temp->next = NULL ;
@@ -73,7 +73,7 @@ void Stack::Push( char ch ) {
 } // Push()
 
 Data* Stack::GetTop() {
-
+	// 拿出stack頂端的東西 
 	if ( IsEmpty() )
 		cout << "There is nothing can be get.\n" ;
 	else {
@@ -88,7 +88,7 @@ Data* Stack::GetTop() {
 } // Pop()
 
 void Stack::Pop() {
-
+	// 將stack頂端彈掉 
 	if ( IsEmpty() )
 		cout << "There is nothing can be pop.\n" ;
 	else {
@@ -101,7 +101,7 @@ void Stack::Pop() {
 } // Pop()
 
 char Stack::ShowTop() {
-
+	// 看stack頂端是什麼 
 	if ( IsEmpty() )
 		cout << "There is nothing can be show\n" ;
 	else
@@ -123,27 +123,28 @@ bool Stack::IsEmpty() {
 class List {
 
 	Data* head ;
-	int total ;
 
 	public:
 
 	List() {
 		head = NULL ;
-		total = 0 ;
 	} // List
 	~List() {
-	// remove or something
+		while ( head != NULL ) {
+			Data* walk = head ;
+			head = head->next ;
+			delete walk ;
+		} // while
 		delete head ;
 	} // ~List
 
 	void Add( string str ) ;
 	bool IsEmpty() ;
-	void Remove( int p ) ;
 	void PrintList() ;
 };
 
 void List::Add( string str ) {
-
+	// 加一節點到鏈結串列尾端，其值為string str 
 	Data* temp = new Data() ;
 	temp->str = str ;
 	temp->next = NULL ;
@@ -157,7 +158,6 @@ void List::Add( string str ) {
 
 		walk->next = temp ;
 	} // else
-	total ++ ;
 
 } // Add()
 
@@ -170,15 +170,8 @@ bool List::IsEmpty() {
 
 } // IsEmpty()
 
-void List::Remove( int p ) {
-
-	if ( 0 <= p && p < total )
-		;
-
-} // Delete()
-
 void List::PrintList() {
-
+	// 從頭印出每個節點的值 
     Data* walk = head ;
     while ( walk != NULL ) {
         cout << walk->str ;
@@ -192,18 +185,26 @@ void List::PrintList() {
 
 
 bool IsLegalEx( string ex ) {
-
+	// 看陣列中的式子是否為合法的中序式 
+	
+	if ( ex.size() == 0 ) {
+		cout << "給我式子我才能看啊!\n" ; 
+		return false ;
+	} // if
+		
 	int numOpenP = 0, numCloseP = 0 ;   // 記錄這式子有幾個'('和')'
 	bool wasOprator = false, wasOpenP = false, wasCloseP = false ;
 	for ( int i = 0 ; i < ex.size() ; i++ ) {
 
 		if ( ex[i] == '+' || ex[i] == '-' || ex[i] == '*' || ex[i] == '/' ) {
-			if ( wasOprator ) {   // 如果運算符號前是運算符號
-				cout << "extra operator\n" ;
+			if ( wasOprator ) {
+				// 如果運算符號前是運算符號，表示這個運算符號是多餘的 
+				cout << "there is one extra operator.\n" ;
 				return false ;
 			} // if
-			else if ( wasOpenP ) {   // 如果運算符號前是'('
-				cout << "not infix in p\n" ;
+			else if ( wasOpenP ) {
+				// 如果運算符號前是'('，表示這個括弧內的式子不為中序 
+				cout << "It is not infix in the parentheses.\n" ;
 				return false ;
 			} // else if
 			wasOprator = true ;
@@ -211,8 +212,9 @@ bool IsLegalEx( string ex ) {
 			wasCloseP = false ;
 		} // if
 		else if ( '0' <= ex[i] && ex[i] <= '9' ) {
-			if ( wasCloseP ) {  // 如果數字前是')'
-				cout << "extra operand\n" ;
+			if ( wasCloseP ) {
+				// 如果數字前是')'，表示式子內有多餘的數字 
+				cout << "There is one extra operand.\n" ;
 				return false ;
 			}
 			wasOprator = false ;
@@ -222,15 +224,16 @@ bool IsLegalEx( string ex ) {
 		else if ( ex[i] == ')' ) {
 			if ( wasOpenP || wasOprator ) {
 				// 如果)前面是(或運算符號，就代表括號內的式子不為中序
-				cout << "not infix in p\n" ;
+				cout << "It is not infix in the parentheses.\n" ;
 				return false ;
 			}
 
 			if ( numOpenP > numCloseP )
 				// 如果前面記錄到'('的數量大於')'，正常記錄')'數量增加
 				numCloseP ++ ;
-			else {   // 如為非，表示這式子多了')'
-				cout << "extra close p\n" ;
+			else {
+				// 如為非，表示這式子多了')'
+				cout << "There is one extra close parenthesis.\n" ;
 				return false ;
 			} // else
 			wasOprator = false ;
@@ -245,8 +248,8 @@ bool IsLegalEx( string ex ) {
 		} // else if
 		else if ( ex[i] == ' ' )
 			;
-		else {    // 不是+-*/()也不是數字也不是空格，是非法字元
-			cout << ex[i] << " is a illegal char\n" ;
+		else {   // 不是+-*/()也不是數字也不是空格，是非法字元
+			cout << ex[i] << " is not a legitimate character.\n" ;
 			return false ;
 		}
 
@@ -254,11 +257,11 @@ bool IsLegalEx( string ex ) {
 
 	if ( numOpenP > numCloseP ) {
 		// 如果式子中'('的數量大於')'，表示有多的'('
-		cout << "extra open p\n" ;
+		cout << "there is one extra open parenthesis.\n" ;
 		return false ;
 	} // if
 	else if ( numOpenP < numCloseP ) {
-		cout << "extra close p\n" ;
+		cout << "there is one extra close parenthesis.\n" ;
 		return false ;
 	} // else if
 
@@ -267,14 +270,14 @@ bool IsLegalEx( string ex ) {
 } // IsLegalEx()
 
 void InfixToPostfix( string ex, List& postfixEx ) {
-	// stack只需要裝運算符號(char)
-	// List有數字有符號，struct Data該怎麼做
-	Stack stack ;
-	string token ;
+	// 將中序式轉為後序式 
+	Stack stack ;    // stack用來儲存運算符號 
+	string token ;   // token用來 
 	int i = 0 ;
-	while ( i < ex.size() ) {
+	while ( i < ex.size() ) {    
 
 		if ( '0' <= ex[i] && ex[i] <= '9' ) {
+			// 碰到數字時，把它全抓下來做成string型別的token放入postfixEx 
 			token = ex[i] ;
 			i ++ ;
 			while ( i < ex.size() && (( '0' <= ex[i] && ex[i] <= '9' ) || ex[i] == ' ' ) ) {
@@ -287,7 +290,9 @@ void InfixToPostfix( string ex, List& postfixEx ) {
 			token = "" ;
 		} // if
 		else if ( ex[i] == '+' || ex[i] == '-' ) {
-            while ( !stack.IsEmpty() && ( stack.ShowTop() != '\0' && stack.ShowTop() != '(' ) ) {
+			// 碰到+, -時，將stack裡的符號拿出放入後序式，直到碰到 ( 或stack為空
+			// 再將 +, -放入stack 
+            while ( !stack.IsEmpty() && stack.ShowTop() != '(' ) {
                 token = stack.GetTop()->ch ;
                 postfixEx.Add( token ) ;
                 token = "" ;
@@ -296,6 +301,8 @@ void InfixToPostfix( string ex, List& postfixEx ) {
 			i ++ ;
         } // else if
 		else if ( ex[i] == '*' || ex[i] == '/' ) {
+			// 碰到 * , / 時，將stack頂端的所有 *, / 拿出放入後序式 
+			// 再將 *, / 放入stack 
             while ( !stack.IsEmpty() && ( stack.ShowTop() == '*' || stack.ShowTop() == '/' ) ) {
                 token = stack.GetTop()->ch ;
                 postfixEx.Add( token ) ;
@@ -305,10 +312,12 @@ void InfixToPostfix( string ex, List& postfixEx ) {
             i++ ;
 		} // else if
 		else if ( ex[i] == '(' ) {
+			// 碰到 ( 時，將其放入stack 
 			stack.Push( ex[i] ) ;
 			i ++ ;
 		} // else if
 		else if ( ex[i] == ')' ) {
+			// 碰到 ) 時，取出stack的內容物，直到碰到 (  
 			while ( stack.ShowTop() != '(' ) {
                 token = stack.GetTop()->ch ;
                 postfixEx.Add( token ) ;
@@ -324,6 +333,7 @@ void InfixToPostfix( string ex, List& postfixEx ) {
 	} // while
 
 	while ( !stack.IsEmpty() ) {
+		// 如果stack內還有東西，就都取出 
         token = stack.GetTop()->ch ;
         postfixEx.Add( token ) ;
         token = "" ;
@@ -334,26 +344,31 @@ void InfixToPostfix( string ex, List& postfixEx ) {
 int main() {
 
 	int cmd = -1 ;
-	cout << "1為執行\n0為退出\n請輸入指令:" ;
-	cin >> cmd ;
+	cout << "1. 執行中序轉後序\n0. 退出\n請輸入指令:" ;
+	cmd = GetInput() ;
 	string temp ;
 	while ( cmd != 0 ) {
 
-		getline( cin, temp ) ;   // 除去\n
-		string ex ;
-		cout << "輸入式子:" ;
-		getline( cin, ex ) ;
+		if ( cmd == 1 ) {
+		
+			getline( cin, temp ) ;   // 除去\n
+			string ex ;
+			cout << "輸入式子:" ;
+			getline( cin, ex ) ;
+			
+			if ( IsLegalEx( ex ) ) {   // 判斷式子是否為合法 
+       	    	cout << "\nIt's a infix expression.\n" ;
+				List postfixEx ;
+				InfixToPostfix( ex, postfixEx ) ;  // 將式子由中序轉為後序 
+				postfixEx.PrintList() ;
+			} // if
+	
+		} // if cmd == 1
+		else
+			cout << "沒這個指令\n" ;
 
-		if ( IsLegalEx( ex ) ) {   // 判斷式子是否合法
-            cout << "It's infix.\n" ;
-			List postfixEx ;
-			InfixToPostfix( ex, postfixEx ) ;
-			postfixEx.PrintList() ;
-		} // if
-
-
-		cout << "1為執行\n0為退出\n請輸入指令:" ;
-		cin >> cmd ;
+		cout << "1. 執行中序轉後序\n0. 退出\n請輸入指令:" ;
+		cmd = GetInput() ;
 
 	} // while
 
