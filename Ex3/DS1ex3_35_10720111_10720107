@@ -8,12 +8,13 @@ using namespace std ;
 
 int GetInput() {
 	// 取得用戶輸入，以確保格式
-	string input ;
-	cin >> input ;
-	for ( int i = 0 ; i < input.size() ; i++ )
-		if ( !isdigit( input[i] ) ) {
+	string input, temp ;
+	getline( cin, input ) ;
+	
+	for ( int i = 0 ; i < input.size() || input.size() == 0 ; i++ )
+		if ( input.size() == 0 || !isdigit( input[i] ) ) {
 			cout << "格式錯誤，請輸入一個不為負的整數: " ;
-			cin >>  input ;
+			getline( cin, input ) ;
 			i = 0 ;
 		} // if
 
@@ -194,37 +195,46 @@ bool IsLegalEx( string ex ) {
 		
 	int numOpenP = 0, numCloseP = 0 ;   // 記錄這式子有幾個'('和')'
 	bool wasOprator = false, wasOpenP = false, wasCloseP = false ;
+	bool wasNum = false ;
 	for ( int i = 0 ; i < ex.size() ; i++ ) {
 
 		if ( ex[i] == '+' || ex[i] == '-' || ex[i] == '*' || ex[i] == '/' ) {
 			if ( wasOprator ) {
 				// 如果運算符號前是運算符號，表示這個運算符號是多餘的 
-				cout << "there is one extra operator.\n" ;
+				cout << "Error 3: there is one extra operator.\n" ;
 				return false ;
 			} // if
 			else if ( wasOpenP ) {
 				// 如果運算符號前是'('，表示這個括弧內的式子不為中序 
-				cout << "It is not infix in the parentheses.\n" ;
+				cout << "Error 3: it is not infix in the parentheses.\n" ;
 				return false ;
 			} // else if
+			else if ( !wasNum && !wasCloseP ) {
+				// 式子開頭為運算符號是錯的 
+				cout << "Error 3: there is one extra operator.\n" ;
+				return false ;
+			}
+				
 			wasOprator = true ;
 			wasOpenP = false ;
 			wasCloseP = false ;
+			wasNum = false ;
 		} // if
 		else if ( '0' <= ex[i] && ex[i] <= '9' ) {
 			if ( wasCloseP ) {
 				// 如果數字前是')'，表示式子內有多餘的數字 
-				cout << "There is one extra operand.\n" ;
+				cout << "Error 3: there is one extra operand.\n" ;
 				return false ;
 			}
 			wasOprator = false ;
 			wasOpenP = false ;
 			wasCloseP = false ;
+			wasNum = true ;
 		} // else if
 		else if ( ex[i] == ')' ) {
 			if ( wasOpenP || wasOprator ) {
 				// 如果)前面是(或運算符號，就代表括號內的式子不為中序
-				cout << "It is not infix in the parentheses.\n" ;
+				cout << "Error 3: it is not infix in the parentheses.\n" ;
 				return false ;
 			}
 
@@ -233,35 +243,43 @@ bool IsLegalEx( string ex ) {
 				numCloseP ++ ;
 			else {
 				// 如為非，表示這式子多了')'
-				cout << "There is one extra close parenthesis.\n" ;
+				cout << "Error 2: there is one extra close parenthesis.\n" ;
 				return false ;
 			} // else
 			wasOprator = false ;
 			wasOpenP = false ;
 			wasCloseP = true ;
+			wasNum = false ;
 		} // else if
 		else if ( ex[i] == '(' ) {
 			numOpenP ++ ;
 			wasOprator = false ;
 			wasOpenP = true ;
 			wasCloseP = false ;
+			wasNum = false ;
 		} // else if
 		else if ( ex[i] == ' ' )
 			;
 		else {   // 不是+-*/()也不是數字也不是空格，是非法字元
-			cout << ex[i] << " is not a legitimate character.\n" ;
+			cout << "Error 1: " << ex[i] << " is not a legitimate character.\n" ;
 			return false ;
 		}
 
 	} // for
 
+	if ( wasOprator ) {
+		// 式子尾端為運算符號時是錯的 
+		cout << "Error 3: there is one extra operator.\n" ;
+		return false ;
+	} // if
+	
 	if ( numOpenP > numCloseP ) {
 		// 如果式子中'('的數量大於')'，表示有多的'('
-		cout << "there is one extra open parenthesis.\n" ;
+		cout << "Error 2: there is one extra open parenthesis.\n" ;
 		return false ;
 	} // if
 	else if ( numOpenP < numCloseP ) {
-		cout << "there is one extra close parenthesis.\n" ;
+		cout << "Error 2: there is one extra close parenthesis.\n" ;
 		return false ;
 	} // else if
 
@@ -346,12 +364,10 @@ int main() {
 	int cmd = -1 ;
 	cout << "1. 執行中序轉後序\n0. 退出\n請輸入指令:" ;
 	cmd = GetInput() ;
-	string temp ;
 	while ( cmd != 0 ) {
 
 		if ( cmd == 1 ) {
 		
-			getline( cin, temp ) ;   // 除去\n
 			string ex ;
 			cout << "輸入式子:" ;
 			getline( cin, ex ) ;
