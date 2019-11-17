@@ -1,1 +1,52 @@
+// 10720111 陳少暉 10720107 陳丕中
 
+#include<iostream>
+#include<vector>
+#include<string>
+
+using namespace std ;
+
+class Queue {
+
+
+
+};
+
+class Job {
+
+
+};
+
+void ShellSort(){
+
+
+
+} // ShellSort
+
+bool Load( string fileName ) {
+
+    FILE *infile = NULL ;
+    bool success = false ;
+
+    fileName = "input" + fileName + ".txt" ;
+	infile = fopen(fileName.c_str(), "r") ;
+	if ( infile == NULL )
+		;
+	else{
+
+
+    fclose( infile ) ;
+
+	} // else
+
+	return success ;
+
+} // Load
+
+int main(){
+
+
+
+    return 0 ;
+
+} // main()
