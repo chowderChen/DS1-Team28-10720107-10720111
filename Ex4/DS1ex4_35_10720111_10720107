@@ -3,12 +3,31 @@
 #include<iostream>
 #include<vector>
 #include<string>
+#include<ctime>
 
 using namespace std ;
 
+struct Job {
+    // 每個工作所帶有的資料
+    int ID ;
+    int arrival ;
+    int duration ;
+    int timeout ;
+
+};
+
 class sortQueue {
-	
+
+    struct QueueNode {
+		int num ;
+		QueueNode * next ;
+	};
+
+	QueueNode * backPtr ;
+	QueueNode * frontPtr ;
+
 public :
+
 	void Queue :: isEmpty() { // isEmpty
 		if ( frontPtr == NULL )
 		    return true ;
@@ -17,26 +36,26 @@ public :
 	    else
 	        return false ;
 	}
-	
+
 	void Queue :: enQueue ( int num ) { // enQueue
 		QueueNode * newPtr = new QueueNode ;
 		newPtr->num = newNum ;
 		newPtr->next = NULL ;
-		
-		if ( isEmpyt() ) 
+
+		if ( isEmpyt() )
 		    frontPtr = newPtr ;
-		else 
+		else
 		    backPtr->next = newPtr ;
-		    
+
 	    backPtr = newPtr ;
 	}
-	
+
 	void Queue :: deQueue () { // deQueue
 		if ( isEmpty() ) {
 			printf( "is Empty!") ;
 		} // if
 		else {
-		
+
 		    QueueNode * tempPtr = frontPtr ;
 		    if ( frontPtr == backPtr ) {
 		    	frontPtr = NULL ;
@@ -45,68 +64,40 @@ public :
 		    else {
 		    	front = front->next ;
 		    } // else
-		
+
 		    tempPtr->next = NULL ;
 	    	delete tempPtr ;
 	    } // else
 	}
-	
+
 	void Queue :: getFront ( int num ) {
 		if ( isEmpty() )
 		    printf("is Empty!!") ;
-		    
+
 	    else
 	        num = front->num ;
 	}
-	
-	
-		
-private :
-	struct QueueNode {
-		int num ;
-		QueueNode * next ;
-	};
-	
-	QueueNode * backPtr ;
-	QueueNode * frontPtr ;
-	
-		
-}; 
-
-struct Job {
-
-    int ID ;
-    int arrival ;
-    int duration ;
-    int timeout ;
-
-};
-
-class JobQueue {
-
-
-
-    public:
-
-    void Push() ;
-    void Pop() ;
-    void Front() ;
-    void Back() ;
 
 };
 
 class JobList {
+    // 存放工作清單
+
+    vector<Job> aList ;
 
 
 public:
 
-    void ShellSort() ;
+    void Sort() ;
     bool Load() ;
 
-};
+}; // class JobList
 
-void JobList::ShellSort(){
-
+void JobList::Sort(){
+    // shell sort
+    for ( int gap = aList.size()/2 ; gap > 0 ; gap = gap / 2 )
+        for ( int i = gap ; i < aList.size() ; i++ )
+            for ( int j = i ; j >= gap && ; j = j - gap )
 
 
 } // ShellSort
@@ -144,7 +135,9 @@ bool JobList::Load( string fileName ) {
 
 int main(){
 
-
+    JobList aList = new JobList ;
+    aList.Load() ;
+    aList.Sort() ;
 
     return 0 ;
 
