@@ -6,6 +6,73 @@
 
 using namespace std ;
 
+class sortQueue {
+	
+public :
+	void Queue :: isEmpty() { // isEmpty
+		if ( frontPtr == NULL )
+		    return true ;
+		else if ( backPtr == NULL )
+		    return true ;
+	    else
+	        return false ;
+	}
+	
+	void Queue :: enQueue ( int num ) { // enQueue
+		QueueNode * newPtr = new QueueNode ;
+		newPtr->num = newNum ;
+		newPtr->next = NULL ;
+		
+		if ( isEmpyt() ) 
+		    frontPtr = newPtr ;
+		else 
+		    backPtr->next = newPtr ;
+		    
+	    backPtr = newPtr ;
+	}
+	
+	void Queue :: deQueue () { // deQueue
+		if ( isEmpty() ) {
+			printf( "is Empty!") ;
+		} // if
+		else {
+		
+		    QueueNode * tempPtr = frontPtr ;
+		    if ( frontPtr == backPtr ) {
+		    	frontPtr = NULL ;
+		    	backPtr = NULL ;
+		    } // if
+		    else {
+		    	front = front->next ;
+		    } // else
+		
+		    tempPtr->next = NULL ;
+	    	delete tempPtr ;
+	    } // else
+	}
+	
+	void Queue :: getFront ( int num ) {
+		if ( isEmpty() )
+		    printf("is Empty!!") ;
+		    
+	    else
+	        num = front->num ;
+	}
+	
+	
+		
+private :
+	struct QueueNode {
+		int num ;
+		QueueNode * next ;
+	};
+	
+	QueueNode * backPtr ;
+	QueueNode * frontPtr ;
+	
+		
+}; 
+
 struct Job {
 
     int ID ;
