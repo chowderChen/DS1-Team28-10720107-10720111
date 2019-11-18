@@ -15,10 +15,11 @@ struct Job {
 
 };
 
-class Queue {
+class JobQueue {
 
 
-public:
+
+    public:
 
     void Push() ;
     void Pop() ;
@@ -27,21 +28,29 @@ public:
 
 };
 
+class JobList {
 
 
-void ShellSort(){
+public:
+
+    void ShellSort() ;
+    bool Load() ;
+
+};
+
+void JobList::ShellSort(){
 
 
 
 } // ShellSort
 
-bool Load( string fileName ) {
+bool JobList::Load( string fileName ) {
 
     FILE *infile = NULL ;
     bool success = false ;
 
     fileName = "input" + fileName + ".txt" ;
-	infile = fopen(fileName.c_str(), "r") ;
+    infile = fopen(fileName.c_str(), "r") ;
 
 	if ( infile == NULL )
 		;
@@ -54,10 +63,10 @@ bool Load( string fileName ) {
 
         vector<Job> jobList ;
         Job aJob ;
-        int ID, arrival, duration, timeout ;
         while ( fscanf( infile, "%d %d %d %d", aJob.ID, aJob.arrival, aJob.duration, aJob.timeout ) != EOF )
             jobList.push_back( aJob ) ;
 
+        success = true ;
         fclose( infile ) ;
 
 	} // else
