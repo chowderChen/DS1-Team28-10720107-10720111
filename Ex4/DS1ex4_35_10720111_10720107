@@ -6,16 +6,28 @@
 
 using namespace std ;
 
+struct Job {
+
+    int ID ;
+    int arrival ;
+    int duration ;
+    int timeout ;
+
+};
+
 class Queue {
 
 
+public:
+
+    void Push() ;
+    void Pop() ;
+    void Front() ;
+    void Back() ;
 
 };
 
-class Job {
 
-
-};
 
 void ShellSort(){
 
@@ -30,12 +42,13 @@ bool Load( string fileName ) {
 
     fileName = "input" + fileName + ".txt" ;
 	infile = fopen(fileName.c_str(), "r") ;
+
 	if ( infile == NULL )
 		;
 	else{
 
 
-    fclose( infile ) ;
+        fclose( infile ) ;
 
 	} // else
 
