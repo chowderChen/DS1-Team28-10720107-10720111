@@ -47,6 +47,16 @@ bool Load( string fileName ) {
 		;
 	else{
 
+        char temp ;
+
+        while ( fscanf( infile, "%c", temp ) != EOF && temp != '\n' )
+            ;
+
+        vector<Job> jobList ;
+        Job aJob ;
+        int ID, arrival, duration, timeout ;
+        while ( fscanf( infile, "%d %d %d %d", aJob.ID, aJob.arrival, aJob.duration, aJob.timeout ) != EOF )
+            jobList.push_back( aJob ) ;
 
         fclose( infile ) ;
 
