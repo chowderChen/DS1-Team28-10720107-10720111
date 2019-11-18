@@ -8,6 +8,7 @@
 using namespace std ;
 
 struct Job {
+
     // 每個工作所帶有的資料
     int ID ;
     int arrival ;
@@ -17,6 +18,7 @@ struct Job {
 };
 
 class sortQueue {
+
 
     struct QueueNode {
 		int num ;
@@ -37,7 +39,8 @@ public :
 	        return false ;
 	}
 
-	void Queue :: enQueue ( int num ) { // enQueue
+	void Queue :: enQueue ( int num ) {
+        // 將東西放入queue
 		QueueNode * newPtr = new QueueNode ;
 		newPtr->num = newNum ;
 		newPtr->next = NULL ;
@@ -48,9 +51,10 @@ public :
 		    backPtr->next = newPtr ;
 
 	    backPtr = newPtr ;
-	}
+	} // enQueue
 
-	void Queue :: deQueue () { // deQueue
+	void Queue :: deQueue () {
+	    // 將東西拿出queue
 		if ( isEmpty() ) {
 			printf( "is Empty!") ;
 		} // if
@@ -68,9 +72,11 @@ public :
 		    tempPtr->next = NULL ;
 	    	delete tempPtr ;
 	    } // else
-	}
+
+	} // deQueue
 
 	void Queue :: getFront ( int num ) {
+	    // 看queue最前面是什麼
 		if ( isEmpty() )
 		    printf("is Empty!!") ;
 
@@ -81,7 +87,7 @@ public :
 };
 
 class JobList {
-    // 存放工作清單
+    // 存放工作的清單
 
     vector<Job> aList ;
 
@@ -94,16 +100,16 @@ public:
 }; // class JobList
 
 void JobList::Sort(){
-    // shell sort
+    // 用shell sort將其變為從小到大排序
     for ( int gap = aList.size()/2 ; gap > 0 ; gap = gap / 2 )
         for ( int i = gap ; i < aList.size() ; i++ )
             for ( int j = i ; j >= gap && ; j = j - gap )
 
 
-} // ShellSort
+} // Sort
 
 bool JobList::Load( string fileName ) {
-
+    // 讀檔
     FILE *infile = NULL ;
     bool success = false ;
 
