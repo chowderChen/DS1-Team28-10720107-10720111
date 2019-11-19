@@ -19,7 +19,6 @@ struct Job {
 
 class sortQueue {
 
-
     struct QueueNode {
 		int num ;
 		QueueNode * next ;
@@ -29,18 +28,29 @@ class sortQueue {
 	QueueNode * frontPtr ;
 
 public :
+	
+	Queue() ;
+	bool IsEmpty() ;
+	void EnQueue( int newNum ) ;
+	void DeQueue() ;
+	void DeQueue( int getNum ) ;
+	void GetFront( int getNum ) ;
+	
 
-	void Queue :: isEmpty() { // isEmpty
+		
+ // destructor
+
+	bool Queue::IsEmpty() { 
 		if ( frontPtr == NULL )
 		    return true ;
 		else if ( backPtr == NULL )
 		    return true ;
 	    else
 	        return false ;
-	}
+	} // isEmpty()
 
-	void Queue :: enQueue ( int num ) {
-        // 將東西放入queue
+	void Queue::EnQueue ( int newNum ) { // enQueue() 新增 
+	   // 將東西放入queue
 		QueueNode * newPtr = new QueueNode ;
 		newPtr->num = newNum ;
 		newPtr->next = NULL ;
@@ -51,10 +61,11 @@ public :
 		    backPtr->next = newPtr ;
 
 	    backPtr = newPtr ;
-	} // enQueue
+	} // enQueue()
 
-	void Queue :: deQueue () {
+	void Queue::DeQueue () { // deQueue 移除 
 	    // 將東西拿出queue
+	
 		if ( isEmpty() ) {
 			printf( "is Empty!") ;
 		} // if
@@ -66,26 +77,37 @@ public :
 		    	backPtr = NULL ;
 		    } // if
 		    else {
-		    	front = front->next ;
+		    	frontPtr = frontPtr->next ;
 		    } // else
 
 		    tempPtr->next = NULL ;
 	    	delete tempPtr ;
 	    } // else
+	} //deQueue()
 
-	} // deQueue
-
-	void Queue :: getFront ( int num ) {
+	void Queue::GetFront ( int getNum ) { // getFront() 擷取 
 	    // 看queue最前面是什麼
+	
 		if ( isEmpty() )
 		    printf("is Empty!!") ;
 
 	    else
-	        num = front->num ;
-	}
+	        getNum = front->num ;
+	} // getFront()
+	
+	void Queue::DeQueue( int getNum ) { // deQueue() 擷取後刪除
+	    if( isEmpty() ) {
+	    	printf("is Empty!") ;
+		} // if
+		else {
+			getNum = frontPtr->num ;
+			deQueue() ;
+		} // else
+		
+	} // 擷取後刪除 
+	
 
 };
-
 class JobList {
     // 存放工作的清單
 
