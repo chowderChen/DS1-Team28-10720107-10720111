@@ -27,8 +27,8 @@ class sortQueue {
 
 	QueueNode * backPtr ;
 	QueueNode * frontPtr ;
-
-public :
+	
+	public :
 	
 	Queue() ;
 	bool IsEmpty() ;
@@ -38,77 +38,76 @@ public :
 	void GetFront( int getNum ) ;
 	
 
-		
- // destructor
-
-	bool Queue::IsEmpty() { 
-		if ( frontPtr == NULL )
-		    return true ;
-		else if ( backPtr == NULL )
-		    return true ;
-	    else
-	        return false ;
-	} // isEmpty()
-
-	void Queue::EnQueue ( int newNum ) { // enQueue() 新增 
-	   // 將東西放入queue
-		QueueNode * newPtr = new QueueNode ;
-		newPtr->num = newNum ;
-		newPtr->next = NULL ;
-
-		if ( isEmpyt() )
-		    frontPtr = newPtr ;
-		else
-		    backPtr->next = newPtr ;
-
-	    backPtr = newPtr ;
-	} // enQueue()
-
-	void Queue::DeQueue () { // deQueue 移除 
-	    // 將東西拿出queue
-	
-		if ( isEmpty() ) {
-			printf( "is Empty!") ;
-		} // if
-		else {
-
-		    QueueNode * tempPtr = frontPtr ;
-		    if ( frontPtr == backPtr ) {
-		    	frontPtr = NULL ;
-		    	backPtr = NULL ;
-		    } // if
-		    else {
-		    	frontPtr = frontPtr->next ;
-		    } // else
-
-		    tempPtr->next = NULL ;
-	    	delete tempPtr ;
-	    } // else
-	} //deQueue()
-
-	void Queue::GetFront ( int getNum ) { // getFront() 擷取 
-	    // 看queue最前面是什麼
-	
-		if ( isEmpty() )
-		    printf("is Empty!!") ;
-
-	    else
-	        getNum = front->num ;
-	} // getFront()
-	
-	void Queue::DeQueue( int getNum ) { // deQueue() 擷取後刪除
-	    if( isEmpty() ) {
-	    	printf("is Empty!") ;
-		} // if
-		else {
-			getNum = frontPtr->num ;
-			deQueue() ;
-		} // else
-		
-	} // 擷取後刪除 
-	
-
 };
+
+bool sortQueue::IsEmpty() { 
+	
+	if ( frontPtr == NULL )
+	    return true ;
+	else if ( backPtr == NULL )
+	    return true ;
+    else
+        return false ;
+} // isEmpty()
+
+void sortQueue::EnQueue ( int newNum ) { // enQueue() 新增 
+   // 將東西放入queue
+	QueueNode * newPtr = new QueueNode ;
+	newPtr->num = newNum ;
+	newPtr->next = NULL ;
+
+	if ( IsEmpty() )
+	    frontPtr = newPtr ;
+	else
+	    backPtr->next = newPtr ;
+
+    backPtr = newPtr ;
+} // enQueue()
+
+void sortQueue::DeQueue () { // deQueue 移除 
+    // 將東西拿出queue
+	
+	if ( IsEmpty() ) {
+		printf( "is Empty!") ;
+	} // if
+	else {
+
+	    QueueNode * tempPtr = frontPtr ;
+	    if ( frontPtr == backPtr ) {
+	    	frontPtr = NULL ;
+	    	backPtr = NULL ;
+	    } // if
+	    else {
+	    	frontPtr = frontPtr->next ;
+	    } // else
+
+	    tempPtr->next = NULL ;
+    	delete tempPtr ;
+    } // else
+} //deQueue()
+
+void sortQueue::GetFront ( int getNum ) { // getFront() 擷取 
+    // 看queue最前面是什麼
+
+	if ( IsEmpty() )
+	    printf("is Empty!!") ;
+
+    else
+        getNum = frontPtr->num ;
+} // getFront()
+	
+void sortQueue::DeQueue( int getNum ) { // deQueue() 擷取後刪除
+    if( IsEmpty() ) {
+    	printf("is Empty!") ;
+	} // if
+	else {
+		getNum = frontPtr->num ;
+		DeQueue() ;
+	} // else
+		
+} // 擷取後刪除 
+
+
 class JobList {
     // 存放工作的清單
 
