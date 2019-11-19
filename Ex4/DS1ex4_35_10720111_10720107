@@ -128,7 +128,7 @@ void JobList::Sort(){
         for ( int i = gap ; i < aList.size() ; i++ ) {
             Job tempJob = aList.at( i ) ;
             int j = -1 ;
-            for ( j = i ; j >= gap && tempJob.ID < aList.at( j - gap ).ID ; j = j - gap )
+            for ( j = i ; j >= gap && tempJob.arrival < aList.at( j - gap ).arrival ; j = j - gap )
                 aList.at( j ) = aList.at( j -  gap ) ;
 
             aList.at(j) = tempJob ;
