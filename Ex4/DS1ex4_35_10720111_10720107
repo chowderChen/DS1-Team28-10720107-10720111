@@ -17,21 +17,21 @@ class sortQueue {
 
 	QueueNode * backPtr ;
 	QueueNode * frontPtr ;
-	
+
 	public :
-	
+
 	Queue() ;
 	bool IsEmpty() ;
 	void EnQueue( int newNum ) ;
 	void DeQueue() ;
 	void DeQueue( int getNum ) ;
 	void GetFront( int getNum ) ;
-	
+
 
 };
 
-bool sortQueue::IsEmpty() { 
-	
+bool sortQueue::IsEmpty() {
+
 	if ( frontPtr == NULL )
 	    return true ;
 	else if ( backPtr == NULL )
@@ -40,7 +40,7 @@ bool sortQueue::IsEmpty() {
         return false ;
 } // isEmpty()
 
-void sortQueue::EnQueue ( int newNum ) { // enQueue() 新增 
+void sortQueue::EnQueue ( int newNum ) { // enQueue() 新增
    // 將東西放入queue
 	QueueNode * newPtr = new QueueNode ;
 	newPtr->num = newNum ;
@@ -54,9 +54,9 @@ void sortQueue::EnQueue ( int newNum ) { // enQueue() 新增
     backPtr = newPtr ;
 } // enQueue()
 
-void sortQueue::DeQueue () { // deQueue 移除 
+void sortQueue::DeQueue () { // deQueue 移除
     // 將東西拿出queue
-	
+
 	if ( IsEmpty() ) {
 		printf( "is Empty!") ;
 	} // if
@@ -76,7 +76,7 @@ void sortQueue::DeQueue () { // deQueue 移除
     } // else
 } //deQueue()
 
-void sortQueue::GetFront ( int getNum ) { // getFront() 擷取 
+void sortQueue::GetFront ( int getNum ) { // getFront() 擷取
     // 看queue最前面是什麼
 
 	if ( IsEmpty() )
@@ -85,7 +85,7 @@ void sortQueue::GetFront ( int getNum ) { // getFront() 擷取
     else
         getNum = frontPtr->num ;
 } // getFront()
-	
+
 void sortQueue::DeQueue( int getNum ) { // deQueue() 擷取後刪除
     if( IsEmpty() ) {
     	printf("is Empty!") ;
@@ -94,8 +94,8 @@ void sortQueue::DeQueue( int getNum ) { // deQueue() 擷取後刪除
 		getNum = frontPtr->num ;
 		DeQueue() ;
 	} // else
-		
-} // 擷取後刪除 
+
+} // 擷取後刪除
 
 struct Job {
 
@@ -137,11 +137,13 @@ void JobList::Sort(){
         for ( int i = gap ; i < aList.size() ; i++ ) {
             Job tempJob = aList.at( i ) ;
             int j = -1 ;
-            for ( j = i ; j >= gap && tempJob.arrival < aList.at( j - gap ).arrival ; j = j - gap )
+            for ( j = i ; j >= gap && ( tempJob.arrival < aList.at( j - gap ).arrival
+                || ( tempJob.arrival == aList.at( j - gap ).arrival
+                    && tempJob.ID < aList.at( j - gap ).ID ) ) ; j = j - gap ) {
                 aList.at( j ) = aList.at( j -  gap ) ;
+            } // for
 
             aList.at(j) = tempJob ;
-
         } // for
 
 
