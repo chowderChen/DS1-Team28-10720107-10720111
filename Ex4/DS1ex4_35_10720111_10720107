@@ -8,16 +8,6 @@
 
 using namespace std ;
 
-struct Job {
-
-    // 每個工作所帶有的資料
-    int ID ;
-    int arrival ;
-    int duration ;
-    int timeout ;
-
-};
-
 class sortQueue {
 
     struct QueueNode {
@@ -107,6 +97,15 @@ void sortQueue::DeQueue( int getNum ) { // deQueue() 擷取後刪除
 		
 } // 擷取後刪除 
 
+struct Job {
+
+    // 每個工作所帶有的資料
+    int ID ;
+    int arrival ;
+    int duration ;
+    int timeout ;
+
+};
 
 class JobList {
     // 存放工作的清單
@@ -117,9 +116,20 @@ class JobList {
 public:
 
     void Sort() ;
-    bool Load() ;
+    bool Load( string fileName ) ;
+    void PrintAll() ;
+    void Export() ;
 
 }; // class JobList
+
+void JobList::PrintAll(){
+
+    for ( int i = 0 ; i < aList.size() ; i++ ) {
+        cout << aList.at(i).ID << " " << aList.at(i).arrival << " " ;
+        cout << aList.at(i).duration << " " << aList.at(i).timeout << "\n" ;
+    } // for
+
+} // PrintAll
 
 void JobList::Sort(){
     // 用shell sort將其變為從小到大排序
@@ -175,6 +185,7 @@ int main(){
     cin >> fileName ;
     aList.Load( fileName ) ;
     aList.Sort() ;
+    aList.PrintAll() ;
 
     return 0 ;
 
