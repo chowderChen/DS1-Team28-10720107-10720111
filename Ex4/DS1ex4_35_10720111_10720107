@@ -113,14 +113,41 @@ class JobList {
     vector<Job> aList ;
 
 
-public:
+    public:
 
     void Sort() ;
     bool Load( string fileName ) ;
     void PrintAll() ;
-    void Export() ;
+    bool Export( string fileName ) ;
 
 }; // class JobList
+
+
+bool JobList::Export( string fileName ) {
+    // Export sorted job list to .txt
+
+    FILE *outFile = NULL ;
+    bool success = false ;
+    fileName = "sorted" + fileName + ".txt" ;
+    outFile = fopen( fileName.c_str(), "w" ) ;
+    if ( outFile == NULL )
+        ;
+    else {
+
+        fprintf( outFile, "OID\tArrival\tDuration\tTimeOut\n" ) ;
+        for ( int i = 0 ; i < aList.size() ; i++ ) {
+            fprintf( outFile, "%d\t%d\t%d\t%d\n", aList.at( i ).ID, aList.at( i ).arrival
+                    , aList.at( i ).duration, aList.at( i ).timeout ) ;
+        } // for
+
+        success = true ;
+        fclose( outFile ) ;
+
+    } // else
+
+    return success ;
+
+} // Export
 
 void JobList::PrintAll(){
 
@@ -155,7 +182,7 @@ bool JobList::Load( string fileName ) {
     bool success = false ;
 
     fileName = "input" + fileName + ".txt" ;
-    infile = fopen(fileName.c_str(), "r") ;
+    infile = fopen(fileName.c_str(), "r" ) ;
 
 	if ( infile == NULL )
 		;
@@ -188,6 +215,7 @@ int main(){
     aList.Load( fileName ) ;
     aList.Sort() ;
     aList.PrintAll() ;
+    aList.Export( fileName ) ;
 
     return 0 ;
 
