@@ -115,17 +115,18 @@ class JobList {
 
     public:
 
-    void Sort() ;
-    bool Load( string fileName ) ;
+    void Sort( clock_t &t ) ;
+    bool Load( string fileName, clock_t &t ) ;
     void PrintAll() ;
-    bool Export( string fileName ) ;
+    bool Export( string fileName, clock_t &t ) ;
 
 }; // class JobList
 
 
-bool JobList::Export( string fileName ) {
+bool JobList::Export( string fileName, clock_t &t ) {
     // Export sorted job list to .txt
 
+    t = clock() ;
     FILE *outFile = NULL ;
     bool success = false ;
     fileName = "sorted" + fileName + ".txt" ;
@@ -145,21 +146,25 @@ bool JobList::Export( string fileName ) {
 
     } // else
 
+    t = clock() - t ;
     return success ;
 
 } // Export
 
 void JobList::PrintAll(){
 
+    cout << "OID\tArrival\tDuration\tTimeOut\n" ;
     for ( int i = 0 ; i < aList.size() ; i++ ) {
-        cout << aList.at(i).ID << " " << aList.at(i).arrival << " " ;
-        cout << aList.at(i).duration << " " << aList.at(i).timeout << "\n" ;
+        cout << aList.at(i).ID << "\t" << aList.at(i).arrival << "\t" ;
+        cout << aList.at(i).duration << "\t" << aList.at(i).timeout << "\n" ;
     } // for
+    cout << "\n" ;
 
 } // PrintAll
 
-void JobList::Sort(){
+void JobList::Sort( clock_t &t ){
     // 用shell sort將其變為從小到大排序
+    t = clock() ;
     for ( int gap = aList.size()/2 ; gap > 0 ; gap = gap / 2 )
         for ( int i = gap ; i < aList.size() ; i++ ) {
             Job tempJob = aList.at( i ) ;
@@ -172,14 +177,15 @@ void JobList::Sort(){
 
             aList.at(j) = tempJob ;
         } // for
-
+    t = clock() - t ;
 
 } // Sort
 
-bool JobList::Load( string fileName ) {
+bool JobList::Load( string fileName, clock_t &t ) {
     // 讀檔
     FILE *infile = NULL ;
     bool success = false ;
+    t = clock() ;
 
     fileName = "input" + fileName + ".txt" ;
     infile = fopen(fileName.c_str(), "r" ) ;
@@ -202,20 +208,45 @@ bool JobList::Load( string fileName ) {
 
 	} // else
 
+    t = clock() - t ;
+
 	return success ;
 
 } // Load
 
 int main(){
 
-    JobList aList ;
-    string fileName ;
-    cout << "file name:" ;
-    cin >> fileName ;
-    aList.Load( fileName ) ;
-    aList.Sort() ;
-    aList.PrintAll() ;
-    aList.Export( fileName ) ;
+    cout << "(0)Exit\n(1)Sort file\n(2)Simulate(not yet)\n" ;
+    cout << "Command: " ;
+    int cmd = -1 ;
+    cin >> cmd ;
+    while ( cmd != 0 ) {
+        if ( cmd == 1 ) {
+
+            JobList aList ;
+            string fileName ;
+            cout << "file name:" ;
+            cin >> fileName ;
+            clock_t tLoad, tSort, tExport ;
+            aList.Load( fileName, tLoad ) ;
+            aList.PrintAll() ;
+            aList.Sort( tSort ) ;
+            aList.Export( fileName, tExport ) ;
+            float msLoad = (float)tLoad / CLOCKS_PER_SEC * 1000 ,
+                  msSort = (float)tSort / CLOCKS_PER_SEC * 1000 ,
+                  msExport = (float)tExport / CLOCKS_PER_SEC * 1000  ;
+
+            printf( "Reading data: %d clocks (%.2f ms).\n", tLoad, msLoad ) ;
+            printf( "Sorting data: %d clocks (%.2f ms).\n", tSort, msSort ) ;
+            printf( "Writing data: %d clocks (%.2f ms).\n", tExport, msExport ) ;
+
+        } // if
+
+        cout << "(0)Exit\n(1)Sort file\n(2)Simulate(not yet)\n" ;
+        cout << "Command: " ;
+        cin >> cmd ;
+
+    } // while
 
     return 0 ;
 
