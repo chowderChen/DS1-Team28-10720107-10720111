@@ -18,10 +18,26 @@ struct Job {
 
 };
 
+struct AbortJob {
+
+    int ID ;
+    int abort ;
+    int delay ;
+
+};
+
+struct DoneJob {
+
+    int ID ;
+    int departure ;
+    int delay ;
+
+};
+
 class sortQueue {
 
     struct QueueNode {
-		int num ;
+		Job aJob ;
 		QueueNode * next ;
 	};
 
@@ -30,12 +46,20 @@ class sortQueue {
 
 	public :
 
-	Queue() ;
+    sortQueue {
+        frontPtr = NULL ;
+        backPtr = NULL ;
+    } // sortqueue
+    ~sortQueue {
+        while( !IsEmpty() )
+            DeQueue() ;
+    } // ~sortqueue
+
 	bool IsEmpty() ;
-	void EnQueue( int newNum ) ;
+	void EnQueue( int newJob ) ;
 	void DeQueue() ;
-	void DeQueue( int getNum ) ;
-	void GetFront( int getNum ) ;
+	void DeQueue( Job &aJob ) ;
+	void GetFront( Job &aJob ) ;
 
 
 };
@@ -50,10 +74,10 @@ bool sortQueue::IsEmpty() {
         return false ;
 } // isEmpty()
 
-void sortQueue::EnQueue ( int newNum ) { // enQueue() 新增
+void sortQueue::EnQueue ( Job newJob ) { // enQueue() 新增
    // 將東西放入queue
 	QueueNode * newPtr = new QueueNode ;
-	newPtr->num = newNum ;
+	newPtr->aJob = newJob ;
 	newPtr->next = NULL ;
 
 	if ( IsEmpty() )
@@ -84,24 +108,26 @@ void sortQueue::DeQueue () { // deQueue 移除
 	    tempPtr->next = NULL ;
     	delete tempPtr ;
     } // else
+
 } //deQueue()
 
-void sortQueue::GetFront ( int getNum ) { // getFront() 擷取
+void sortQueue::GetFront ( Job &aJob ) { // getFront() 擷取
     // 看queue最前面是什麼
 
 	if ( IsEmpty() )
 	    printf("is Empty!!") ;
 
     else
-        getNum = frontPtr->num ;
+        aJob = frontPtr->aJob ;
+
 } // getFront()
 
-void sortQueue::DeQueue( int getNum ) { // deQueue() 擷取後刪除
+void sortQueue::DeQueue( Job &aJob ) { // deQueue() 擷取後刪除
     if( IsEmpty() ) {
     	printf("is Empty!") ;
 	} // if
 	else {
-		getNum = frontPtr->num ;
+		aJob = frontPtr->aJob ;
 		DeQueue() ;
 	} // else
 
@@ -114,7 +140,6 @@ class JobList {
 
     vector<Job> aList ;
 
-
     public:
 
     void Sort( clock_t &t ) ;
@@ -122,9 +147,23 @@ class JobList {
     bool Load( string fileName ) ;
     void PrintAll() ;
     bool Export( string fileName, clock_t &t ) ;
+    Job At( int i ) ;
+    int Size() ;
 
 }; // class JobList
 
+int JobList::Size() {
+    return aList.size() ;
+} // Size
+
+Job JobList::At( int i ) {
+
+    if ( 0 <= i && i < aList.size() )
+        return aList.at( i ) ;
+
+    return NULL ;
+
+} // At
 
 bool JobList::Export( string fileName, clock_t &t ) {
     // Export sorted job list to .txt
@@ -247,6 +286,45 @@ bool JobList::Load( string fileName ) {
 
 } // Load
 
+class EventList {
+
+    struct DepartureEvent {
+        int ID ;
+        int Departure ;
+    };
+    struct Event {
+        char type ;
+        Job aEvent ;
+        DepartureEvent dEvent ;
+    };
+
+    vector<>
+
+    public:
+
+    void PutEventIn( Event newEvent );
+    bool IsEmpty() ;
+
+}; // class EventList
+
+void ProccessArrival() {
+    if ( aQueue.IsEmpty() )
+        ; // just run
+    else if ( aQueue.length == 3 )
+        ; // abort it?
+    else
+        ; // put it into the queue?
+} // ProccessArrival
+
+void Simulate() {
+
+    Job aJob = aList.At( 0 ) ;
+    for ( int i = 0 ; i < aList.Size() ; i++ )
+    if (  )
+
+
+} // Simulate
+
 int main(){
 
     cout << "(0)Exit\n(1)Sort file\n(2)Simulate(not yet)\n" ;
@@ -275,7 +353,7 @@ int main(){
                 printf( "Sorting data: %d clocks (%.2f ms).\n", tSort, msSort ) ;
                 printf( "Writing data: %d clocks (%.2f ms).\n", tExport, msExport ) ;
 
-                cout << "\nSee sorted" << fileName << ".txt for detail.\n" ;
+                aList.PrintAll() ;
             } // else
 
         } // if
@@ -286,8 +364,13 @@ int main(){
             cout << "file name:" ;
             cin >> fileName ;
             aList.Load( fileName ) ;
+            sortQueue aQueue ;
+            for ( int i = 0 ; i < aList.Size() ; i++ )
+                if (  )
 
         } // else if cmd == 2
+        else
+            cout << "Unknown command.\n" ;
 
         cout << "(0)Exit\n(1)Sort file\n(2)Simulate(not yet)\n" ;
         cout << "Command: " ;
