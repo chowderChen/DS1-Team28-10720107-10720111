@@ -39,21 +39,22 @@ class sortQueue {
 
 	public :
 
-    sortQueue {
+    sortQueue() {
         frontPtr = NULL ;
         backPtr = NULL ;
         length = 0 ;
     } // sortqueue
-    ~sortQueue {
+    ~sortQueue() {
         while( !IsEmpty() )
             DeQueue() ;
     } // ~sortqueue
 
 	bool IsEmpty() ;
-	void EnQueue( int newJob ) ;
+	void EnQueue( Job newJob ) ;
 	void DeQueue() ;
 	void DeQueue( Job &aJob ) ;
 	void GetFront( Job &aJob ) ;
+	void GetBack( Job &aJob ) ;
     int Length() ;
 
 };
@@ -117,6 +118,13 @@ void sortQueue::GetFront ( Job &aJob ) { // getFront() 擷取
 
 } // getFront()
 
+void sortQueue::GetBack( Job &aJob ) {
+    if ( IsEmpty() )
+        cout << "There is nothing.\n" ;
+    else
+        aJob = backPtr->aJob ;
+} // GetBack
+
 void sortQueue::DeQueue( Job &aJob ) { // deQueue() 擷取後刪除
     if( IsEmpty() ) {
     	printf("is Empty!") ;
@@ -155,12 +163,7 @@ int JobList::Size() {
 } // Size
 
 Job JobList::At( int i ) {
-
-    if ( 0 <= i && i < aList.size() )
-        return aList.at( i ) ;
-
-    return NULL ;
-
+    return aList.at( i ) ;
 } // At
 
 bool JobList::Export( string fileName, clock_t &t ) {
@@ -308,8 +311,26 @@ class EventList {
 
 }; // class EventList
 
+void EventList::PutEventIn( Event newEvent ) {
+
+    if ( IsEmpty() )
+        eventList.push_back( newEvent ) ;
+    else if ( newEvent.type == 'a' && newEvent.aEvent.arrival < eventList.at( 0 ).dEvent.Departure )
+        eventList.insert( 0, newEvent ) ; //insert infront of it
+    else if ( newEvent.type == 'd' && newEvent.dEvent.Departure <= eventList.at( 0 ).aEvent.arrival )
+        eventList.insert( 0, newEvent ) ; // front insert
+    else
+        eventList.push_back( newEvent ) ;
+
+} // Put
+
+bool EventList::IsEmpty() {
+    return eventList.empty() ;
+} // Empty
+
 class Simulation {
 
+    JobList jobList ;
     sortQueue aQueue ;
     EventList eventList ;
     vector<DoneJob> abortList ;
@@ -318,34 +339,52 @@ class Simulation {
     public:
 
     void Simulate() ;
-    void ProccessArrival() ;
+    void ProccessArrival( Event newEvent ) ;
+    void ProccessDeparture( Event newEvent ) ;
+    bool LoadJobList( string fileName ) ;
 
 };
 
-void Simulation::ProccessArrival() {
-    if ( aQueue.IsEmpty() )
-        ; // just run
+bool Simulation::LoadJobList( string fileName ) {
+    return jobList.Load( fileName ) ;
+} // Load
+
+void Simulation::ProccessArrival( Event newEvent ) {
+    if ( aQueue.IsEmpty() ) {
+        // just run?
+        aQueue.EnQueue( newEvent );
+    } // if
     else if ( aQueue.Length() == 3 ) {
-        ; // abort it?
+        // abort it?
+        DoneJob abortJob ;
+        abortJob.ID = ;
     } // else if
     else
-        ; // put it into the queue?
+    // put it into the queue?
+        ;
 } // ProccessArrival
+
+void Simulation::ProccessDeparture( Event newEvent ) {
+    Job tempJob ;
+    aQueue.GetBack( tempJob ) ;
+    if ( !aQueue.IsEmpty() && tempJob < )
+        ;
+
+} // Proccess Departure
 
 void Simulation::Simulate() {
 
-    Event event ;
-    event.type = 'a' ;
-    event.aEvent = aList.At( 0 ) ;
+    Event AEvent ;
+    AEvent.type = 'a' ;
+    AEvent.aEvent = jobList.At( 0 ) ;
     eventList.PutEventIn( AEvent ) ;
-    for ( int i = 0 ; i < aList.Size() ; i++ ) {
-        Event newEvent = aEventList.Pop() ;
+    while ( !eventList.IsEmpty() ) {
+        Event newEvent = eventList.Pop() ;
         if ( newEvent.type == 'a' )
-            ProccessArrival() ;
+            ProccessArrival( newEvent ) ;
         else
-            ProccessDeparture() ;
-
-    } // for
+            ProccessDeparture( newEvent ) ;
+    } // while
 
 } // Simulate
 
@@ -383,14 +422,12 @@ int main(){
         } // if
         else if( cmd == 2 ) {
 
-            JobList aList ;
+            Simulation aSimulation ;
             string fileName ;
             cout << "file name:" ;
             cin >> fileName ;
-            aList.Load( fileName ) ;
-            sortQueue aQueue ;
-            for ( int i = 0 ; i < aList.Size() ; i++ )
-                if (  )
+            aSimulation.LoadJobList( fileName ) ;
+            aSimulation.Simulate() ;
 
         } // else if cmd == 2
         else
