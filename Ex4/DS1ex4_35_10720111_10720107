@@ -18,18 +18,10 @@ struct Job {
 
 };
 
-struct AbortJob {
-
-    int ID ;
-    int abort ;
-    int delay ;
-
-};
-
 struct DoneJob {
 
     int ID ;
-    int departure ;
+    int out ;
     int delay ;
 
 };
@@ -43,12 +35,14 @@ class sortQueue {
 
 	QueueNode * backPtr ;
 	QueueNode * frontPtr ;
+	int length ;
 
 	public :
 
     sortQueue {
         frontPtr = NULL ;
         backPtr = NULL ;
+        length = 0 ;
     } // sortqueue
     ~sortQueue {
         while( !IsEmpty() )
@@ -60,7 +54,7 @@ class sortQueue {
 	void DeQueue() ;
 	void DeQueue( Job &aJob ) ;
 	void GetFront( Job &aJob ) ;
-
+    int Length() ;
 
 };
 
@@ -86,6 +80,7 @@ void sortQueue::EnQueue ( Job newJob ) { // enQueue() 新增
 	    backPtr->next = newPtr ;
 
     backPtr = newPtr ;
+    length++ ;
 } // enQueue()
 
 void sortQueue::DeQueue () { // deQueue 移除
@@ -95,7 +90,6 @@ void sortQueue::DeQueue () { // deQueue 移除
 		printf( "is Empty!") ;
 	} // if
 	else {
-
 	    QueueNode * tempPtr = frontPtr ;
 	    if ( frontPtr == backPtr ) {
 	    	frontPtr = NULL ;
@@ -107,6 +101,7 @@ void sortQueue::DeQueue () { // deQueue 移除
 
 	    tempPtr->next = NULL ;
     	delete tempPtr ;
+    	length--;
     } // else
 
 } //deQueue()
@@ -133,6 +128,9 @@ void sortQueue::DeQueue( Job &aJob ) { // deQueue() 擷取後刪除
 
 } // 擷取後刪除
 
+int sortQueue::Length() {
+    return length ;
+} // Length
 
 
 class JobList {
@@ -286,42 +284,68 @@ bool JobList::Load( string fileName ) {
 
 } // Load
 
+
+struct DepartureEvent {
+    int ID ;
+    int Departure ;
+};
+
+struct Event {
+    char type ;
+    Job aEvent ;
+    DepartureEvent dEvent ;
+};
+
 class EventList {
 
-    struct DepartureEvent {
-        int ID ;
-        int Departure ;
-    };
-    struct Event {
-        char type ;
-        Job aEvent ;
-        DepartureEvent dEvent ;
-    };
-
-    vector<>
+    vector<Event> eventList ;
 
     public:
 
     void PutEventIn( Event newEvent );
     bool IsEmpty() ;
+    Event Pop() ;
 
 }; // class EventList
 
-void ProccessArrival() {
+class Simulation {
+
+    sortQueue aQueue ;
+    EventList eventList ;
+    vector<DoneJob> abortList ;
+    vector<DoneJob> doneList ;
+
+    public:
+
+    void Simulate() ;
+    void ProccessArrival() ;
+
+};
+
+void Simulation::ProccessArrival() {
     if ( aQueue.IsEmpty() )
         ; // just run
-    else if ( aQueue.length == 3 )
+    else if ( aQueue.Length() == 3 ) {
         ; // abort it?
+    } // else if
     else
         ; // put it into the queue?
 } // ProccessArrival
 
-void Simulate() {
+void Simulation::Simulate() {
 
-    Job aJob = aList.At( 0 ) ;
-    for ( int i = 0 ; i < aList.Size() ; i++ )
-    if (  )
+    Event event ;
+    event.type = 'a' ;
+    event.aEvent = aList.At( 0 ) ;
+    eventList.PutEventIn( AEvent ) ;
+    for ( int i = 0 ; i < aList.Size() ; i++ ) {
+        Event newEvent = aEventList.Pop() ;
+        if ( newEvent.type == 'a' )
+            ProccessArrival() ;
+        else
+            ProccessDeparture() ;
 
+    } // for
 
 } // Simulate
 
