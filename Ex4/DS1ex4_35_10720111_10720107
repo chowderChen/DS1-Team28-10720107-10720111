@@ -8,6 +8,16 @@
 
 using namespace std ;
 
+struct Job {
+
+    // 每個工作所帶有的資料
+    int ID ;
+    int arrival ;
+    int duration ;
+    int timeout ;
+
+};
+
 class sortQueue {
 
     struct QueueNode {
@@ -97,15 +107,7 @@ void sortQueue::DeQueue( int getNum ) { // deQueue() 擷取後刪除
 
 } // 擷取後刪除
 
-struct Job {
 
-    // 每個工作所帶有的資料
-    int ID ;
-    int arrival ;
-    int duration ;
-    int timeout ;
-
-};
 
 class JobList {
     // 存放工作的清單
@@ -117,6 +119,7 @@ class JobList {
 
     void Sort( clock_t &t ) ;
     bool Load( string fileName, clock_t &t ) ;
+    bool Load( string fileName ) ;
     void PrintAll() ;
     bool Export( string fileName, clock_t &t ) ;
 
@@ -214,6 +217,36 @@ bool JobList::Load( string fileName, clock_t &t ) {
 
 } // Load
 
+bool JobList::Load( string fileName ) {
+    // 讀檔
+    FILE *infile = NULL ;
+    bool success = false ;
+
+    fileName = "sorted" + fileName + ".txt" ;
+    infile = fopen(fileName.c_str(), "r" ) ;
+
+	if ( infile == NULL )
+		;
+	else{
+
+        char temp ;
+
+        while ( fscanf( infile, "%c", &temp ) != EOF && temp != '\n' )
+            ;
+
+        Job aJob ;
+        while ( fscanf( infile, "%d %d %d %d", &aJob.ID, &aJob.arrival, &aJob.duration, &aJob.timeout ) != EOF )
+            aList.push_back( aJob ) ;
+
+        success = true ;
+        fclose( infile ) ;
+
+	} // else
+
+	return success ;
+
+} // Load
+
 int main(){
 
     cout << "(0)Exit\n(1)Sort file\n(2)Simulate(not yet)\n" ;
@@ -228,19 +261,33 @@ int main(){
             cout << "file name:" ;
             cin >> fileName ;
             clock_t tLoad, tSort, tExport ;
-            aList.Load( fileName, tLoad ) ;
-            aList.PrintAll() ;
-            aList.Sort( tSort ) ;
-            aList.Export( fileName, tExport ) ;
-            float msLoad = (float)tLoad / CLOCKS_PER_SEC * 1000 ,
-                  msSort = (float)tSort / CLOCKS_PER_SEC * 1000 ,
-                  msExport = (float)tExport / CLOCKS_PER_SEC * 1000  ;
+            if ( !aList.Load( fileName, tLoad ) )
+                cout << "Can not find the file.\n" ;
+            else {
+                aList.PrintAll() ;
+                aList.Sort( tSort ) ;
+                aList.Export( fileName, tExport ) ;
+                float msLoad = (float)tLoad / CLOCKS_PER_SEC * 1000 ,
+                      msSort = (float)tSort / CLOCKS_PER_SEC * 1000 ,
+                      msExport = (float)tExport / CLOCKS_PER_SEC * 1000  ;
 
-            printf( "Reading data: %d clocks (%.2f ms).\n", tLoad, msLoad ) ;
-            printf( "Sorting data: %d clocks (%.2f ms).\n", tSort, msSort ) ;
-            printf( "Writing data: %d clocks (%.2f ms).\n", tExport, msExport ) ;
+                printf( "Reading data: %d clocks (%.2f ms).\n", tLoad, msLoad ) ;
+                printf( "Sorting data: %d clocks (%.2f ms).\n", tSort, msSort ) ;
+                printf( "Writing data: %d clocks (%.2f ms).\n", tExport, msExport ) ;
+
+                cout << "\nSee sorted" << fileName << ".txt for detail.\n" ;
+            } // else
 
         } // if
+        else if( cmd == 2 ) {
+
+            JobList aList ;
+            string fileName ;
+            cout << "file name:" ;
+            cin >> fileName ;
+            aList.Load( fileName ) ;
+
+        } // else if cmd == 2
 
         cout << "(0)Exit\n(1)Sort file\n(2)Simulate(not yet)\n" ;
         cout << "Command: " ;
