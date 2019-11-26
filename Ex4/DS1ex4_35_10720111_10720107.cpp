@@ -450,6 +450,23 @@ void Simulation::PrintResult() {
     for ( int i = 0 ; i < doneList.size() ; i++ ) {
         cout << doneList[i].ID << "\t" << doneList[i].outTime << "\t" << doneList[i].delay << "\n" ;
     } // for
+    
+    // CAL average delay
+    float averageDelay = 0 ;
+    float successRate = 0.0 ;
+    for ( int i = 0 ; i < abortList.size() ; i++ )
+    	averageDelay = averageDelay + abortList[i].delay ;
+    for ( int i = 0 ; i < doneList.size() ; i++ )
+    	averageDelay = averageDelay + doneList[i].delay ;
+    	
+    averageDelay = (float) averageDelay / ( abortList.size() + doneList.size() ) ;
+    printf( "[Average Delay] %.2f ms\n", averageDelay ) ;
+    
+    // CAL success rate
+    successRate = ( float ) doneList.size() / ( abortList.size() + doneList.size() ) ;
+    successRate = successRate * 100 ;
+    printf( "[Success Rate] %.2f %\n", successRate ) ;
+    
     cout << "\n" ;
     
 } // Print
@@ -477,6 +494,21 @@ void Simulation::Export( string fileName ) {
             fprintf( outFile, "%d\t%d\t%d\n", doneList.at( i ).ID, doneList.at( i ).outTime
                     , doneList.at( i ).delay ) ;
         } // for
+
+		// CAL average delay
+  	  	float averageDelay = 0 ;
+   		float successRate = 0.0 ;
+  	  	for ( int i = 0 ; i < abortList.size() ; i++ )
+    		averageDelay = averageDelay + abortList[i].delay ;
+    	for ( int i = 0 ; i < doneList.size() ; i++ )
+    		averageDelay = averageDelay + doneList[i].delay ;
+    	
+    	averageDelay = (float) averageDelay / ( abortList.size() + doneList.size() ) ;
+    	fprintf( outFile, "[Average Delay] %.2f ms\n", averageDelay ) ;
+    	// CAL success rate
+    	successRate = ( float ) doneList.size() / ( abortList.size() + doneList.size() ) ;
+    	successRate = successRate * 100 ;
+    	fprintf( outFile, "[Success Rate] %.2f %\n", successRate ) ;
 
         success = true ;
         fclose( outFile ) ;
