@@ -10,7 +10,6 @@ using namespace std ;
 
 struct Job {
 
-    // 每個工作所帶有的資料
     int ID ;
     int arrival ;
     int duration ;
@@ -28,7 +27,7 @@ struct DoneJob {
 };
 
 class JobList {
-    // 存放工作的清單
+    // list for jobs
 
     vector<Job> aList ;
 
@@ -53,7 +52,7 @@ Job JobList::At( int i ) {
 } // At
 
 bool JobList::Export( string fileName, clock_t &t ) {
-    // Export sorted job list to .txt
+    // Export sorted list to .txt
 
     t = clock() ;
     FILE *outFile = NULL ;
@@ -92,7 +91,9 @@ void JobList::PrintAll(){
 } // PrintAll
 
 void JobList::Sort( clock_t &t ){
-    // 用shell sort將其變為從小到大排序
+    // use Shell sort to make the list sort from small to large
+	// according to arrival, ID 
+	
     t = clock() ;
     for ( int gap = aList.size()/2 ; gap > 0 ; gap = gap / 2 )
         for ( int i = gap ; i < aList.size() ; i++ ) {
@@ -111,7 +112,7 @@ void JobList::Sort( clock_t &t ){
 } // Sort
 
 bool JobList::Load( string fileName, clock_t &t ) {
-    // 讀檔
+    // Load a file, turn it into a list of jobs 
     FILE *infile = NULL ;
     bool success = false ;
     t = clock() ;
@@ -143,7 +144,8 @@ bool JobList::Load( string fileName, clock_t &t ) {
 } // Load
 
 bool JobList::Load( string fileName ) {
-    // 讀檔
+    // Load a file, turn it into a list of jobs 
+    
     FILE *infile = NULL ;
     bool success = false ;
 
@@ -210,14 +212,14 @@ class JobQueue {
 };
 
 void JobQueue::PutWaitInFront( int wait ) {
-
+	// put the waiting time into the front of the queue
     if ( !IsEmpty() )
         frontPtr->aJob.wait = wait ;
 
 } //
 
 void JobQueue::Print() {
-
+	// Shows what is in the queue
     cout << "OID\tArrival\tDuration\tTimeOut\n" ;
     for ( QueueNode *walk = frontPtr ; walk != NULL ; walk = walk->next ) {
         cout << walk->aJob.ID << "\t" <<  walk->aJob.arrival << "\t" ;
@@ -228,7 +230,7 @@ void JobQueue::Print() {
 }
 
 bool JobQueue::Load( string fileName ) {
-
+	// Load a file into the queue
     FILE *infile = NULL ;
     bool success = false ;
 
@@ -268,8 +270,8 @@ bool JobQueue::IsEmpty() {
         return false ;
 } // isEmpty()
 
-void JobQueue::EnQueue ( Job newJob ) { // enQueue() 新增
-   // 將東西放入queue
+void JobQueue::EnQueue ( Job newJob ) { 
+   // put sth to the back of the queue
 	QueueNode * newPtr = new QueueNode ;
 	newPtr->aJob = newJob ;
 	newPtr->aJob.wait = 0 ;
@@ -284,8 +286,8 @@ void JobQueue::EnQueue ( Job newJob ) { // enQueue() 新增
     length++ ;
 } // enQueue()
 
-void JobQueue::DeQueue () { // deQueue 移除
-    // 將東西拿出queue
+void JobQueue::DeQueue () { 
+    // take sth from the front of the queue
 
 	if ( IsEmpty() ) {
 		printf( "is Empty!") ;
@@ -307,8 +309,8 @@ void JobQueue::DeQueue () { // deQueue 移除
 
 } //deQueue()
 
-void JobQueue::GetFront ( Job &aJob ) { // getFront() 擷取
-    // 看queue最前面是什麼
+void JobQueue::GetFront ( Job &aJob ) { 
+    // See what is in the front of the queue
 
 	if ( IsEmpty() )
 	    printf("is Empty!!") ;
@@ -319,13 +321,15 @@ void JobQueue::GetFront ( Job &aJob ) { // getFront() 擷取
 } // getFront()
 
 void JobQueue::GetBack( Job &aJob ) {
+	// See what is in the back of the queue
     if ( IsEmpty() )
         cout << "There is nothing.\n" ;
     else
         aJob = backPtr->aJob ;
 } // GetBack
 
-void JobQueue::DeQueue( Job &aJob ) { // deQueue() 擷取後刪除
+void JobQueue::DeQueue( Job &aJob ) { 
+	// take sth out of the queue from the front of the queue
     if( IsEmpty() ) {
     	printf("is Empty!") ;
 	} // if
@@ -334,7 +338,7 @@ void JobQueue::DeQueue( Job &aJob ) { // deQueue() 擷取後刪除
 		DeQueue() ;
 	} // else
 
-} // 擷取後刪除
+} // DeQueue
 
 int JobQueue::Length() {
     return length ;
@@ -376,7 +380,7 @@ class EventList {
 }; // class EventList
 
 Event EventList::Pop(){
-
+	// Pop from the front
     Event tempEvent = eventList->event ;
     EventNode* tempNode = eventList ;
     eventList = eventList->next ;
@@ -386,7 +390,9 @@ Event EventList::Pop(){
 } // Pop
 
 void EventList::PutEventIn( Event newEvent ) {
-
+	// insert a Event into event list
+	// according to the timing
+	
     EventNode* tempEvent = new EventNode ;
     tempEvent->event = newEvent ;
     tempEvent->next = NULL ;
@@ -414,26 +420,42 @@ bool EventList::IsEmpty() {
 
 
 class Simulation {
-
-    JobQueue jobQueue ;
-    JobQueue workQueue ;
-    EventList eventList ;
-    vector<DoneJob> abortList ;
-    vector<DoneJob> doneList ;
+	// Simulate how solo queue work
+	 
+    JobQueue jobQueue ; // sorted jobs 
+    JobQueue workQueue ; // simulate 
+    EventList eventList ; // keeps events
+    vector<DoneJob> abortList ;  
+    vector<DoneJob> doneList ;  
 
     public:
 
     bool Simulate() ;
     void ProccessArrival( Event newEvent ) ;
     void ProccessDeparture( Event newEvent ) ;
-    void PrintDoneList() ;
-    void PrintAbortList() ;
+    void PrintResult();
     void Export( string fileName ) ;
 
 }; // class Simulation
 
-void Simulation::Export( string fileName ) {
+void Simulation::PrintResult() {
+	// Shows abort jobs and jobs done
+	cout << "\t[Abort Jobs]\n" ;
+    cout << "OID\tAbort\tDelay\n" ;
+    for ( int i = 0 ; i < abortList.size() ; i++ ) {
+        cout << abortList[i].ID << "\t" << abortList[i].outTime << "\t" << abortList[i].delay << "\n" ;
+    } // for
+    cout << "\t[Jobs Done]\n" ;
+    cout << "OID\tDeparture\tDelay\n" ;
+    for ( int i = 0 ; i < doneList.size() ; i++ ) {
+        cout << doneList[i].ID << "\t" << doneList[i].outTime << "\t" << doneList[i].delay << "\n" ;
+    } // for
+    cout << "\n" ;
+    
+} // Print
 
+void Simulation::Export( string fileName ) {
+	// Export result to .txt
     FILE *outFile = NULL ;
     bool success = false ;
     fileName = "output" + fileName + ".txt" ;
@@ -442,14 +464,14 @@ void Simulation::Export( string fileName ) {
         ;
     else {
 
-        fprintf( outFile, "\tAbort Jobs\n" ) ;
+        fprintf( outFile, "\t[Abort Jobs]\n" ) ;
         fprintf( outFile, "OID\tAbort\tDelay\n" ) ;
         for ( int i = 0 ; i < abortList.size() ; i++ ) {
             fprintf( outFile, "%d\t%d\t%d\n", abortList.at( i ).ID, abortList.at( i ).outTime
                     , abortList.at( i ).delay ) ;
         } // for
 
-        fprintf( outFile, "\tJobs Done\n" ) ;
+        fprintf( outFile, "\t[Jobs Done]\n" ) ;
         fprintf( outFile, "OID\tDeparture\tDelay\n" ) ;
         for ( int i = 0 ; i < doneList.size() ; i++ ) {
             fprintf( outFile, "%d\t%d\t%d\n", doneList.at( i ).ID, doneList.at( i ).outTime
@@ -463,28 +485,8 @@ void Simulation::Export( string fileName ) {
 
 }
 
-void Simulation::PrintAbortList() {
-
-    cout << "\tAbort Jobs\n" ;
-    cout << "OID\tAbort\tDelay\n" ;
-    for ( int i = 0 ; i < abortList.size() ; i++ ) {
-        cout << abortList[i].ID << "\t" << abortList[i].outTime << "\t" << abortList[i].delay << "\n" ;
-    } // for
-
-} // PrintAbort
-
-void Simulation::PrintDoneList() {
-
-    cout << "\tJobs Done\n" ;
-    cout << "OID\tDeparture\tDelay\n" ;
-    for ( int i = 0 ; i < doneList.size() ; i++ ) {
-        cout << doneList[i].ID << "\t" << doneList[i].outTime << "\t" << doneList[i].delay << "\n" ;
-    } // for
-
-} // Print Done
-
 void Simulation::ProccessArrival( Event newEvent ) {
-
+	// Deal with arrival event
     Event tempEvent ;
     if ( workQueue.IsEmpty() ) {
         // put it into the work queue
@@ -498,7 +500,7 @@ void Simulation::ProccessArrival( Event newEvent ) {
     } // if
     else {
         // something is in the queue
-        if ( workQueue.Length() == 3 ) {
+        if ( workQueue.Length() == 4 ) {
             // work queue is full, abort the job
             DoneJob abortOne ;
             abortOne.ID = newEvent.AEvent.ID ;
@@ -532,10 +534,10 @@ void Simulation::ProccessDeparture( Event newEvent ) {
     // remove the departure event
     // proccess the next job
 
-    // check if it is time out
+    
     Job aJob ;
     workQueue.GetFront( aJob ) ;
-    // if it is time out before it it done
+    // check if it is time out
     if ( aJob.timeout < newEvent.DEvent.departure ) {
         // abort
         workQueue.DeQueue() ;
@@ -546,7 +548,7 @@ void Simulation::ProccessDeparture( Event newEvent ) {
         abortList.push_back( abortOne ) ;
     } // if
     else {
-        // it is done
+        // it is done, jobs done increase
         DoneJob doneOne ;
         doneOne.ID = aJob.ID ;
         doneOne.outTime = aJob.wait + aJob.arrival + aJob.duration ;
@@ -561,7 +563,8 @@ void Simulation::ProccessDeparture( Event newEvent ) {
     } // else
 
     if ( !workQueue.IsEmpty() ) {
-        // proccess new departure
+    	// if there is still sth waiting to be served
+		// serve it, make new departure event
         Event tempEvent ;
         workQueue.GetFront( aJob ) ;
         tempEvent.type = 'd' ;
@@ -572,7 +575,7 @@ void Simulation::ProccessDeparture( Event newEvent ) {
 } // Proccess Departure
 
 bool Simulation::Simulate() {
-
+	
     string fileName ;
     cout << "File name: " ;
     cin >> fileName ;
@@ -581,6 +584,8 @@ bool Simulation::Simulate() {
         return false ;
     } // if
     else {
+    	// Load file success
+    	// Make the first job a arrival event, put it into the event list
         Event event ;
         event.type = 'a' ;
         jobQueue.DeQueue( event.AEvent ) ;
@@ -598,8 +603,7 @@ bool Simulation::Simulate() {
 
     } // else
 
-    PrintDoneList() ;
-    PrintAbortList() ;
+	PrintResult() ;
     Export( fileName ) ;
 
     return true ;
@@ -608,7 +612,7 @@ bool Simulation::Simulate() {
 
 int main(){
 
-    cout << "(0)Exit\n(1)Sort file\n(2)Simulate(not yet)\n" ;
+    cout << "(0)Exit\n(1)Sort file\n(2)Simulate(still working)\n" ;
     cout << "Command: " ;
     int cmd = -1 ;
     cin >> cmd ;
@@ -646,7 +650,7 @@ int main(){
         else
             cout << "Unknown command.\n" ;
 
-        cout << "(0)Exit\n(1)Sort file\n(2)Simulate(not yet)\n" ;
+        cout << "(0)Exit\n(1)Sort file\n(2)Simulate(still working)\n" ;
         cout << "Command: " ;
         cin >> cmd ;
 
