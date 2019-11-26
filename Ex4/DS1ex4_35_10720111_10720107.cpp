@@ -293,21 +293,33 @@ void JobQueue::DeQueue () {
 		printf( "is Empty!") ;
 	} // if
 	else {
-	    QueueNode * tempPtr = frontPtr ;
+	    
 	    if ( frontPtr == backPtr ) {
 	    	frontPtr = NULL ;
 	    	backPtr = NULL ;
 	    } // if
 	    else {
+	    	QueueNode * tempPtr = frontPtr ;
 	    	frontPtr = frontPtr->next ;
+	    	tempPtr->next = NULL ;
+    		delete tempPtr ;
 	    } // else
-
-	    tempPtr->next = NULL ;
-    	delete tempPtr ;
     	length--;
     } // else
 
 } //deQueue()
+
+void JobQueue::DeQueue( Job &aJob ) { 
+	// take sth out of the queue from the front of the queue
+    if( IsEmpty() ) {
+    	printf("is Empty!") ;
+	} // if
+	else {
+		aJob = frontPtr->aJob ;
+		DeQueue() ;
+	} // else
+
+} // DeQueue
 
 void JobQueue::GetFront ( Job &aJob ) { 
     // See what is in the front of the queue
@@ -327,18 +339,6 @@ void JobQueue::GetBack( Job &aJob ) {
     else
         aJob = backPtr->aJob ;
 } // GetBack
-
-void JobQueue::DeQueue( Job &aJob ) { 
-	// take sth out of the queue from the front of the queue
-    if( IsEmpty() ) {
-    	printf("is Empty!") ;
-	} // if
-	else {
-		aJob = frontPtr->aJob ;
-		DeQueue() ;
-	} // else
-
-} // DeQueue
 
 int JobQueue::Length() {
     return length ;
@@ -532,6 +532,7 @@ void Simulation::ProccessArrival( Event newEvent ) {
     } // if
     else {
         // something is in the queue
+        
         if ( workQueue.Length() == 4 ) {
             // work queue is full, abort the job
             DoneJob abortOne ;
@@ -565,19 +566,25 @@ void Simulation::ProccessDeparture( Event newEvent ) {
     // CAL the next job's waiting time
     // remove the departure event
     // proccess the next job
-
     
     Job aJob ;
     workQueue.GetFront( aJob ) ;
-    // check if it is time out
+    // check if it is time out while in cpu
     if ( aJob.timeout < newEvent.DEvent.departure ) {
-        // abort
+        // time out then abort
         workQueue.DeQueue() ;
         DoneJob abortOne ;
         abortOne.ID = aJob.ID ;
-        abortOne.outTime = newEvent.DEvent.departure ;
+        abortOne.outTime = aJob.timeout ;
         abortOne.delay = abortOne.outTime - aJob.arrival ;
         abortList.push_back( abortOne ) ;
+        // new departure
+        newEvent.DEvent.departure = aJob.timeout ;
+        eventList.PutEventIn( newEvent ) ;
+        // CAL the wait of new job
+        workQueue.GetFront( aJob ) ;
+        int wait = newEvent.DEvent.departure - aJob.arrival ; // ????
+        workQueue.PutWaitInFront( wait ) ;
     } // if
     else {
         // it is done, jobs done increase
@@ -594,15 +601,32 @@ void Simulation::ProccessDeparture( Event newEvent ) {
         workQueue.PutWaitInFront( wait ) ;
     } // else
 
-    if ( !workQueue.IsEmpty() ) {
-    	// if there is still sth waiting to be served
-		// serve it, make new departure event
-        Event tempEvent ;
+	bool gotDEvent = false ;
+	// if there is still sth waiting to be executed
+	// check whether it has been time out
+	// if not, execute it, make new departure event
+    while ( !workQueue.IsEmpty() && !gotDEvent ) {
+        
         workQueue.GetFront( aJob ) ;
-        tempEvent.type = 'd' ;
-        tempEvent.DEvent.departure = aJob.arrival + aJob.wait +aJob.duration ;
-        eventList.PutEventIn( tempEvent ) ;
-    } // if
+        if ( aJob.timeout < newEvent.DEvent.departure ) {
+        	// find it time out while being taken from the work queue 
+        	DoneJob abortOne ;
+      	 	abortOne.ID = aJob.ID ;
+        	abortOne.outTime = newEvent.DEvent.departure ;
+        	abortOne.delay = abortOne.outTime - aJob.arrival ;
+        	abortList.push_back( abortOne ) ;;
+        	workQueue.DeQueue() ;
+        		
+        } // if
+		else { 
+			gotDEvent = true ;
+			Event tempEvent ;
+        	tempEvent.type = 'd' ;
+        	tempEvent.DEvent.departure = aJob.arrival + aJob.wait +aJob.duration ;
+        	eventList.PutEventIn( tempEvent ) ;
+    	} // else
+    	
+    } // while
 
 } // Proccess Departure
 
