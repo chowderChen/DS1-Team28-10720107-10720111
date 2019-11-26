@@ -1,4 +1,4 @@
-// 10720111 é™³å°‘æš‰ 10720107 é™³ä¸•ä¸­
+// 10720111 ³¯¤Ö·u 10720107 ³¯¥A¤¤
 
 #include<iostream>
 #include<cstdio>
@@ -10,7 +10,7 @@ using namespace std ;
 
 struct Job {
 
-    // æ¯å€‹å·¥ä½œæ‰€å¸¶æœ‰çš„è³‡æ–™
+    // ¨C­Ó¤u§@©Ò±a¦³ªº¸ê®Æ
     int ID ;
     int arrival ;
     int duration ;
@@ -28,7 +28,7 @@ struct DoneJob {
 };
 
 class JobList {
-    // å­˜æ”¾å·¥ä½œçš„æ¸…å–®
+    // ¦s©ñ¤u§@ªº²M³æ
 
     vector<Job> aList ;
 
@@ -92,7 +92,7 @@ void JobList::PrintAll(){
 } // PrintAll
 
 void JobList::Sort( clock_t &t ){
-    // ç”¨shell sortå°‡å…¶è®Šç‚ºå¾å°åˆ°å¤§æ’åº
+    // ¥Îshell sort±N¨äÅÜ¬°±q¤p¨ì¤j±Æ§Ç
     t = clock() ;
     for ( int gap = aList.size()/2 ; gap > 0 ; gap = gap / 2 )
         for ( int i = gap ; i < aList.size() ; i++ ) {
@@ -111,7 +111,7 @@ void JobList::Sort( clock_t &t ){
 } // Sort
 
 bool JobList::Load( string fileName, clock_t &t ) {
-    // è®€æª”
+    // ÅªÀÉ
     FILE *infile = NULL ;
     bool success = false ;
     t = clock() ;
@@ -143,7 +143,7 @@ bool JobList::Load( string fileName, clock_t &t ) {
 } // Load
 
 bool JobList::Load( string fileName ) {
-    // è®€æª”
+    // ÅªÀÉ
     FILE *infile = NULL ;
     bool success = false ;
 
@@ -268,8 +268,8 @@ bool JobQueue::IsEmpty() {
         return false ;
 } // isEmpty()
 
-void JobQueue::EnQueue ( Job newJob ) { // enQueue() æ–°å¢
-   // å°‡æ±è¥¿æ”¾å…¥queue
+void JobQueue::EnQueue ( Job newJob ) { // enQueue() ·s¼W
+   // ±NªF¦è©ñ¤Jqueue
 	QueueNode * newPtr = new QueueNode ;
 	newPtr->aJob = newJob ;
 	newPtr->aJob.wait = 0 ;
@@ -284,8 +284,8 @@ void JobQueue::EnQueue ( Job newJob ) { // enQueue() æ–°å¢
     length++ ;
 } // enQueue()
 
-void JobQueue::DeQueue () { // deQueue ç§»é™¤
-    // å°‡æ±è¥¿æ‹¿å‡ºqueue
+void JobQueue::DeQueue () { // deQueue ²¾°£
+    // ±NªF¦è®³¥Xqueue
 
 	if ( IsEmpty() ) {
 		printf( "is Empty!") ;
@@ -307,8 +307,8 @@ void JobQueue::DeQueue () { // deQueue ç§»é™¤
 
 } //deQueue()
 
-void JobQueue::GetFront ( Job &aJob ) { // getFront() æ“·å–
-    // çœ‹queueæœ€å‰é¢æ˜¯ä»€éº¼
+void JobQueue::GetFront ( Job &aJob ) { // getFront() Â^¨ú
+    // ¬İqueue³Ì«e­±¬O¤°»ò
 
 	if ( IsEmpty() )
 	    printf("is Empty!!") ;
@@ -325,7 +325,7 @@ void JobQueue::GetBack( Job &aJob ) {
         aJob = backPtr->aJob ;
 } // GetBack
 
-void JobQueue::DeQueue( Job &aJob ) { // deQueue() æ“·å–å¾Œåˆªé™¤
+void JobQueue::DeQueue( Job &aJob ) { // deQueue() Â^¨ú«á§R°£
     if( IsEmpty() ) {
     	printf("is Empty!") ;
 	} // if
@@ -334,7 +334,7 @@ void JobQueue::DeQueue( Job &aJob ) { // deQueue() æ“·å–å¾Œåˆªé™¤
 		DeQueue() ;
 	} // else
 
-} // æ“·å–å¾Œåˆªé™¤
+} // Â^¨ú«á§R°£
 
 int JobQueue::Length() {
     return length ;
@@ -655,3 +655,4 @@ int main(){
     return 0 ;
 
 } // main()
+
