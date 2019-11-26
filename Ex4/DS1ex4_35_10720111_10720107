@@ -435,6 +435,9 @@ void Simulation::PrintDoneList() {
 
     cout << "\tJobs Done\n" ;
     cout << "OID\tDeparture\tDelay\n" ;
+    for ( int i = 0 ; i < doneList.size() ; i++ ) {
+        cout << doneList[i].ID << "\t" << doneList[i].outTime << "\t" << doneList[i].delay << "\n" ;
+    } // for
 
 } // Print Done
 
@@ -583,6 +586,7 @@ int main(){
         else if( cmd == 2 ) {
             Simulation cpu ;
             cpu.Simulate() ;
+            cpu.PrintDoneList() ;
 
         } // else if cmd == 2
         else
