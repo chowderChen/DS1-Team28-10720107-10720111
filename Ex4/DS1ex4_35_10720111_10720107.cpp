@@ -580,7 +580,7 @@ void Simulation::ProccessDeparture( Event newEvent ) {
         cpuTimeout = true ;
         DoneJob abortOne ;
         abortOne.ID = aJob.ID ;
-        abortOne.outTime = aJob.timeout ;
+        abortOne.outTime = newEvent.DEvent.departure ;
         abortOne.delay = abortOne.outTime - aJob.arrival ;
         abortList.push_back( abortOne ) ;
         // hold the new departure time
@@ -610,9 +610,11 @@ void Simulation::ProccessDeparture( Event newEvent ) {
         // remove the job
         workQueue.DeQueue() ;
 		// CAL the wait of new job
-    	workQueue.GetFront( aJob ) ;
-   		wait = newEvent.DEvent.departure - aJob.arrival ;
-   	 	workQueue.PutWaitInFront( wait ) ;
+		if ( !workQueue.IsEmpty() ) {
+    		workQueue.GetFront( aJob ) ;
+   			wait = newEvent.DEvent.departure - aJob.arrival ;
+   	 		workQueue.PutWaitInFront( wait ) ;
+   	 	} // if
 		// if there is still sth waiting to be executed
 		// check whether it has been time out
 		// if not, execute it, make new departure event
@@ -625,6 +627,7 @@ void Simulation::ProccessDeparture( Event newEvent ) {
         		// abort it
         		DoneJob abortOne ;
       	 		abortOne.ID = aJob.ID ;
+      	 		cout << aJob.ID << " in queue abort\n" ;
         		abortOne.outTime = newEvent.DEvent.departure ;
         		abortOne.delay = abortOne.outTime - aJob.arrival ;
         		abortList.push_back( abortOne ) ;
