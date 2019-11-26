@@ -428,8 +428,50 @@ class Simulation {
     void ProccessDeparture( Event newEvent ) ;
     void PrintDoneList() ;
     void PrintAbortList() ;
+    void Export( string fileName ) ;
 
 }; // class Simulation
+
+void Simulation::Export( string fileName ) {
+
+    FILE *outFile = NULL ;
+    bool success = false ;
+    fileName = "output" + fileName + ".txt" ;
+    outFile = fopen( fileName.c_str(), "w" ) ;
+    if ( outFile == NULL )
+        ;
+    else {
+
+        fprintf( outFile, "\tAbort Jobs\n" ) ;
+        fprintf( outFile, "OID\tAbort\tDelay\n" ) ;
+        for ( int i = 0 ; i < abortList.size() ; i++ ) {
+            fprintf( outFile, "%d\t%d\t%d\n", abortList.at( i ).ID, abortList.at( i ).outTime
+                    , abortList.at( i ).delay ) ;
+        } // for
+
+        fprintf( outFile, "\tJobs Done\n" ) ;
+        fprintf( outFile, "OID\tDeparture\tDelay\n" ) ;
+        for ( int i = 0 ; i < doneList.size() ; i++ ) {
+            fprintf( outFile, "%d\t%d\t%d\n", doneList.at( i ).ID, doneList.at( i ).outTime
+                    , doneList.at( i ).delay ) ;
+        } // for
+
+        success = true ;
+        fclose( outFile ) ;
+
+    } // else
+
+}
+
+void Simulation::PrintAbortList() {
+
+    cout << "\tAbort Jobs\n" ;
+    cout << "OID\tAbort\tDelay\n" ;
+    for ( int i = 0 ; i < abortList.size() ; i++ ) {
+        cout << abortList[i].ID << "\t" << abortList[i].outTime << "\t" << abortList[i].delay << "\n" ;
+    } // for
+
+} // PrintAbort
 
 void Simulation::PrintDoneList() {
 
@@ -518,6 +560,15 @@ void Simulation::ProccessDeparture( Event newEvent ) {
         workQueue.PutWaitInFront( wait ) ;
     } // else
 
+    if ( !workQueue.IsEmpty() ) {
+        // proccess new departure
+        Event tempEvent ;
+        workQueue.GetFront( aJob ) ;
+        tempEvent.type = 'd' ;
+        tempEvent.DEvent.departure = aJob.arrival + aJob.wait +aJob.duration ;
+        eventList.PutEventIn( tempEvent ) ;
+    } // if
+
 } // Proccess Departure
 
 bool Simulation::Simulate() {
@@ -546,6 +597,10 @@ bool Simulation::Simulate() {
         } // while
 
     } // else
+
+    PrintDoneList() ;
+    PrintAbortList() ;
+    Export( fileName ) ;
 
     return true ;
 
@@ -586,7 +641,6 @@ int main(){
         else if( cmd == 2 ) {
             Simulation cpu ;
             cpu.Simulate() ;
-            cpu.PrintDoneList() ;
 
         } // else if cmd == 2
         else
