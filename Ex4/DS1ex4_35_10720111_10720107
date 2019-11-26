@@ -21,125 +21,10 @@ struct Job {
 struct DoneJob {
 
     int ID ;
-    int out ;
+    int outTime ;
     int delay ;
 
 };
-
-class sortQueue {
-
-    struct QueueNode {
-		Job aJob ;
-		QueueNode * next ;
-	};
-
-	QueueNode * backPtr ;
-	QueueNode * frontPtr ;
-	int length ;
-
-	public :
-
-    sortQueue() {
-        frontPtr = NULL ;
-        backPtr = NULL ;
-        length = 0 ;
-    } // sortqueue
-    ~sortQueue() {
-        while( !IsEmpty() )
-            DeQueue() ;
-    } // ~sortqueue
-
-	bool IsEmpty() ;
-	void EnQueue( Job newJob ) ;
-	void DeQueue() ;
-	void DeQueue( Job &aJob ) ;
-	void GetFront( Job &aJob ) ;
-	void GetBack( Job &aJob ) ;
-    int Length() ;
-
-};
-
-bool sortQueue::IsEmpty() {
-
-	if ( frontPtr == NULL )
-	    return true ;
-	else if ( backPtr == NULL )
-	    return true ;
-    else
-        return false ;
-} // isEmpty()
-
-void sortQueue::EnQueue ( Job newJob ) { // enQueue() 新增
-   // 將東西放入queue
-	QueueNode * newPtr = new QueueNode ;
-	newPtr->aJob = newJob ;
-	newPtr->next = NULL ;
-
-	if ( IsEmpty() )
-	    frontPtr = newPtr ;
-	else
-	    backPtr->next = newPtr ;
-
-    backPtr = newPtr ;
-    length++ ;
-} // enQueue()
-
-void sortQueue::DeQueue () { // deQueue 移除
-    // 將東西拿出queue
-
-	if ( IsEmpty() ) {
-		printf( "is Empty!") ;
-	} // if
-	else {
-	    QueueNode * tempPtr = frontPtr ;
-	    if ( frontPtr == backPtr ) {
-	    	frontPtr = NULL ;
-	    	backPtr = NULL ;
-	    } // if
-	    else {
-	    	frontPtr = frontPtr->next ;
-	    } // else
-
-	    tempPtr->next = NULL ;
-    	delete tempPtr ;
-    	length--;
-    } // else
-
-} //deQueue()
-
-void sortQueue::GetFront ( Job &aJob ) { // getFront() 擷取
-    // 看queue最前面是什麼
-
-	if ( IsEmpty() )
-	    printf("is Empty!!") ;
-
-    else
-        aJob = frontPtr->aJob ;
-
-} // getFront()
-
-void sortQueue::GetBack( Job &aJob ) {
-    if ( IsEmpty() )
-        cout << "There is nothing.\n" ;
-    else
-        aJob = backPtr->aJob ;
-} // GetBack
-
-void sortQueue::DeQueue( Job &aJob ) { // deQueue() 擷取後刪除
-    if( IsEmpty() ) {
-    	printf("is Empty!") ;
-	} // if
-	else {
-		aJob = frontPtr->aJob ;
-		DeQueue() ;
-	} // else
-
-} // 擷取後刪除
-
-int sortQueue::Length() {
-    return length ;
-} // Length
-
 
 class JobList {
     // 存放工作的清單
@@ -229,7 +114,6 @@ bool JobList::Load( string fileName, clock_t &t ) {
     FILE *infile = NULL ;
     bool success = false ;
     t = clock() ;
-
     fileName = "input" + fileName + ".txt" ;
     infile = fopen(fileName.c_str(), "r" ) ;
 
@@ -288,103 +172,336 @@ bool JobList::Load( string fileName ) {
 } // Load
 
 
+class JobQueue {
+
+    struct QueueNode {
+		Job aJob ;
+		int wait ;
+		QueueNode * next ;
+	};
+
+	QueueNode * backPtr ;
+	QueueNode * frontPtr ;
+	int length ;
+
+	public :
+
+    JobQueue() {
+        frontPtr = NULL ;
+        backPtr = NULL ;
+        length = 0 ;
+    } // queue
+    ~JobQueue() {
+        while( !IsEmpty() )
+            DeQueue() ;
+    } // ~queue
+
+	bool IsEmpty() ;
+	void EnQueue( Job newJob ) ;
+	void DeQueue() ;
+	void DeQueue( Job &aJob ) ;
+	void GetFront( Job &aJob ) ;
+	void GetBack( Job &aJob ) ;
+    int Length() ;
+    bool Load( string fileName ) ;
+    void Print() ;
+
+};
+
+void JobQueue::Print() {
+
+    cout << "OID\tArrival\tDuration\tTimeOut\n" ;
+    for ( QueueNode *walk = frontPtr ; walk != NULL ; walk = walk->next ) {
+        cout << walk->aJob.ID << "\t" <<  walk->aJob.arrival << "\t" ;
+        cout <<  walk->aJob.duration << "\t" <<  walk->aJob.timeout << "\n" ;
+    } // for
+    cout << "\n" ;
+
+}
+
+bool JobQueue::Load( string fileName ) {
+
+    FILE *infile = NULL ;
+    bool success = false ;
+
+    fileName = "sorted" + fileName + ".txt" ;
+    infile = fopen(fileName.c_str(), "r" ) ;
+
+	if ( infile == NULL )
+		;
+	else{
+
+        char temp ;
+
+        while ( fscanf( infile, "%c", &temp ) != EOF && temp != '\n' )
+            ;
+
+        Job aJob ;
+        while ( fscanf( infile, "%d %d %d %d", &aJob.ID, &aJob.arrival, &aJob.duration, &aJob.timeout ) != EOF )
+            EnQueue( aJob ) ;
+
+        success = true ;
+        fclose( infile ) ;
+
+	} // else
+
+	return success ;
+
+
+} // Load
+
+bool JobQueue::IsEmpty() {
+
+	if ( frontPtr == NULL )
+	    return true ;
+	else if ( backPtr == NULL )
+	    return true ;
+    else
+        return false ;
+} // isEmpty()
+
+void JobQueue::EnQueue ( Job newJob ) { // enQueue() 新增
+   // 將東西放入queue
+	QueueNode * newPtr = new QueueNode ;
+	newPtr->aJob = newJob ;
+	newPtr->wait = 0 ;
+	newPtr->next = NULL ;
+
+	if ( IsEmpty() )
+	    frontPtr = newPtr ;
+	else
+	    backPtr->next = newPtr ;
+
+    backPtr = newPtr ;
+    length++ ;
+} // enQueue()
+
+void JobQueue::DeQueue () { // deQueue 移除
+    // 將東西拿出queue
+
+	if ( IsEmpty() ) {
+		printf( "is Empty!") ;
+	} // if
+	else {
+	    QueueNode * tempPtr = frontPtr ;
+	    if ( frontPtr == backPtr ) {
+	    	frontPtr = NULL ;
+	    	backPtr = NULL ;
+	    } // if
+	    else {
+	    	frontPtr = frontPtr->next ;
+	    } // else
+
+	    tempPtr->next = NULL ;
+    	delete tempPtr ;
+    	length--;
+    } // else
+
+} //deQueue()
+
+void JobQueue::GetFront ( Job &aJob ) { // getFront() 擷取
+    // 看queue最前面是什麼
+
+	if ( IsEmpty() )
+	    printf("is Empty!!") ;
+
+    else
+        aJob = frontPtr->aJob ;
+
+} // getFront()
+
+void JobQueue::GetBack( Job &aJob ) {
+    if ( IsEmpty() )
+        cout << "There is nothing.\n" ;
+    else
+        aJob = backPtr->aJob ;
+} // GetBack
+
+void JobQueue::DeQueue( Job &aJob ) { // deQueue() 擷取後刪除
+    if( IsEmpty() ) {
+    	printf("is Empty!") ;
+	} // if
+	else {
+		aJob = frontPtr->aJob ;
+		DeQueue() ;
+	} // else
+
+} // 擷取後刪除
+
+int JobQueue::Length() {
+    return length ;
+} // Length
+
+
 struct DepartureEvent {
-    int ID ;
-    int Departure ;
+    int departure ;
 };
 
 struct Event {
     char type ;
-    Job aEvent ;
-    DepartureEvent dEvent ;
+    Job AEvent ;
+    DepartureEvent DEvent ;
+};
+
+struct EventNode {
+    Event event ;
+    EventNode* next ;
 };
 
 class EventList {
 
-    vector<Event> eventList ;
+    EventNode* eventList ;
 
     public:
 
+    EventList(){
+        eventList = NULL ;
+    }
+    ~EventList() {
+        while( !IsEmpty() )
+            Pop() ;
+    }
     void PutEventIn( Event newEvent );
     bool IsEmpty() ;
     Event Pop() ;
 
 }; // class EventList
 
+Event EventList::Pop(){
+
+    Event tempEvent = eventList->event ;
+    EventNode* tempNode = eventList ;
+    eventList = eventList->next ;
+    delete tempNode ;
+    return tempEvent ;
+
+} // Pop
+
 void EventList::PutEventIn( Event newEvent ) {
 
+    EventNode* tempEvent = new EventNode ;
+    tempEvent->event = newEvent ;
+    tempEvent->next = NULL ;
     if ( IsEmpty() )
-        eventList.push_back( newEvent ) ;
-    else if ( newEvent.type == 'a' && newEvent.aEvent.arrival < eventList.at( 0 ).dEvent.Departure )
-        eventList.insert( 0, newEvent ) ; //insert infront of it
-    else if ( newEvent.type == 'd' && newEvent.dEvent.Departure <= eventList.at( 0 ).aEvent.arrival )
-        eventList.insert( 0, newEvent ) ; // front insert
+        eventList = tempEvent ;
+    else if ( newEvent.type == 'a' && newEvent.AEvent.arrival < eventList->event.DEvent.departure ) {
+        tempEvent->next = eventList ; //insert infront of it
+        eventList = tempEvent ;
+    } // else if
+    else if ( newEvent.type == 'd' && newEvent.DEvent.departure <= eventList->event.AEvent.arrival ) {
+        tempEvent->next = eventList ; // front insert
+        eventList = tempEvent ;
+    } // else if
     else
-        eventList.push_back( newEvent ) ;
+        eventList->next = tempEvent ;
 
 } // Put
 
 bool EventList::IsEmpty() {
-    return eventList.empty() ;
+    if ( eventList == NULL )
+        return true ;
+
+    return false ;
 } // Empty
+
 
 class Simulation {
 
-    JobList jobList ;
-    sortQueue aQueue ;
+    JobQueue jobQueue ;
+    JobQueue workQueue ;
     EventList eventList ;
     vector<DoneJob> abortList ;
     vector<DoneJob> doneList ;
 
     public:
 
-    void Simulate() ;
+    bool Simulate() ;
     void ProccessArrival( Event newEvent ) ;
     void ProccessDeparture( Event newEvent ) ;
-    bool LoadJobList( string fileName ) ;
 
-};
-
-bool Simulation::LoadJobList( string fileName ) {
-    return jobList.Load( fileName ) ;
-} // Load
+}; // class Simulation
 
 void Simulation::ProccessArrival( Event newEvent ) {
-    if ( aQueue.IsEmpty() ) {
-        // just run?
-        aQueue.EnQueue( newEvent );
+
+    Event tempEvent ;
+    if ( workQueue.IsEmpty() ) {
+        // put it into the work queue
+        Job tempJob = newEvent.AEvent ;
+        workQueue.EnQueue( tempJob );
+        // proccess it
+        tempEvent.type = 'd' ;
+        tempEvent.DEvent.departure = tempJob.arrival + tempJob.duration ;
+        eventList.PutEventIn( tempEvent ) ;
+
     } // if
-    else if ( aQueue.Length() == 3 ) {
-        // abort it?
-        DoneJob abortJob ;
-        abortJob.ID = ;
-    } // else if
-    else
-    // put it into the queue?
-        ;
+    else {
+        // something is in the queue
+        if ( workQueue.Length() == 3 ) {
+            // work queue is full, abort the job
+            DoneJob abortOne ;
+            abortOne.ID = newEvent.AEvent.ID ;
+            abortOne.outTime = newEvent.AEvent.arrival ;
+            abortOne.delay = 0 ;
+            abortList.push_back( abortOne ) ;
+        } // if
+        else{
+            // put it into the queue
+            Job tempJob = newEvent.AEvent ;
+            workQueue.EnQueue( tempJob );
+
+        } // else
+
+    } // else
+
+    // take another job into event list
+    if ( !jobQueue.IsEmpty() ) {
+        tempEvent.type = 'a' ;
+        tempEvent.DEvent.departure = -1 ;
+        jobQueue.DeQueue( tempEvent.AEvent ) ;
+        eventList.PutEventIn( tempEvent ) ;
+    } // if
+
 } // ProccessArrival
 
 void Simulation::ProccessDeparture( Event newEvent ) {
-    Job tempJob ;
-    aQueue.GetBack( tempJob ) ;
-    if ( !aQueue.IsEmpty() && tempJob < )
-        ;
+    // delete the job in the queue
+    // check if the next job is time out
+    // CAL the next job's waiting time
+    // remove the departure event
+    // proccess the next job
+    workQueue.DeQueue() ;
+
 
 } // Proccess Departure
 
-void Simulation::Simulate() {
+bool Simulation::Simulate() {
 
-    Event AEvent ;
-    AEvent.type = 'a' ;
-    AEvent.aEvent = jobList.At( 0 ) ;
-    eventList.PutEventIn( AEvent ) ;
-    while ( !eventList.IsEmpty() ) {
-        Event newEvent = eventList.Pop() ;
-        if ( newEvent.type == 'a' )
-            ProccessArrival( newEvent ) ;
-        else
-            ProccessDeparture( newEvent ) ;
-    } // while
+    string fileName ;
+    cout << "File name: " ;
+    cin >> fileName ;
+    if ( !jobQueue.Load( fileName ) ) {
+        cout << "Can not find the file.\n" ;
+        return false ;
+    } // if
+    else {
+        Event event ;
+        event.type = 'a' ;
+        jobQueue.DeQueue( event.AEvent ) ;
+        eventList.PutEventIn( event ) ;
+
+        while ( !eventList.IsEmpty() ) {
+
+            Event newEvent = eventList.Pop() ;
+            if ( newEvent.type == 'a' )
+                ProccessArrival( newEvent ) ;
+            else
+                ProccessDeparture( newEvent ) ;
+
+        } // while
+
+    } // else
+
+    return true ;
 
 } // Simulate
 
@@ -421,14 +538,15 @@ int main(){
 
         } // if
         else if( cmd == 2 ) {
-
+                ;
+/*
             Simulation aSimulation ;
             string fileName ;
             cout << "file name:" ;
             cin >> fileName ;
             aSimulation.LoadJobList( fileName ) ;
             aSimulation.Simulate() ;
-
+*/
         } // else if cmd == 2
         else
             cout << "Unknown command.\n" ;
