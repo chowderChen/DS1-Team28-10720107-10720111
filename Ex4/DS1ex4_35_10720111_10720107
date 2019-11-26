@@ -15,6 +15,7 @@ struct Job {
     int arrival ;
     int duration ;
     int timeout ;
+    int wait ;
 
 };
 
@@ -176,7 +177,6 @@ class JobQueue {
 
     struct QueueNode {
 		Job aJob ;
-		int wait ;
 		QueueNode * next ;
 	};
 
@@ -205,8 +205,16 @@ class JobQueue {
     int Length() ;
     bool Load( string fileName ) ;
     void Print() ;
+    void PutWaitInFront( int wait ) ;
 
 };
+
+void JobQueue::PutWaitInFront( int wait ) {
+
+    if ( !IsEmpty() )
+        frontPtr->aJob.wait = wait ;
+
+} //
 
 void JobQueue::Print() {
 
@@ -264,7 +272,7 @@ void JobQueue::EnQueue ( Job newJob ) { // enQueue() 新增
    // 將東西放入queue
 	QueueNode * newPtr = new QueueNode ;
 	newPtr->aJob = newJob ;
-	newPtr->wait = 0 ;
+	newPtr->aJob.wait = 0 ;
 	newPtr->next = NULL ;
 
 	if ( IsEmpty() )
@@ -418,8 +426,17 @@ class Simulation {
     bool Simulate() ;
     void ProccessArrival( Event newEvent ) ;
     void ProccessDeparture( Event newEvent ) ;
+    void PrintDoneList() ;
+    void PrintAbortList() ;
 
 }; // class Simulation
+
+void Simulation::PrintDoneList() {
+
+    cout << "\tJobs Done\n" ;
+    cout << "OID\tDeparture\tDelay\n" ;
+
+} // Print Done
 
 void Simulation::ProccessArrival( Event newEvent ) {
 
@@ -469,8 +486,34 @@ void Simulation::ProccessDeparture( Event newEvent ) {
     // CAL the next job's waiting time
     // remove the departure event
     // proccess the next job
-    workQueue.DeQueue() ;
 
+    // check if it is time out
+    Job aJob ;
+    workQueue.GetFront( aJob ) ;
+    // if it is time out before it it done
+    if ( aJob.timeout < newEvent.DEvent.departure ) {
+        // abort
+        workQueue.DeQueue() ;
+        DoneJob abortOne ;
+        abortOne.ID = aJob.ID ;
+        abortOne.outTime = newEvent.DEvent.departure ;
+        abortOne.delay = abortOne.outTime - aJob.arrival ;
+        abortList.push_back( abortOne ) ;
+    } // if
+    else {
+        // it is done
+        DoneJob doneOne ;
+        doneOne.ID = aJob.ID ;
+        doneOne.outTime = aJob.wait + aJob.arrival + aJob.duration ;
+        doneOne.delay = aJob.wait ;
+        doneList.push_back( doneOne ) ;
+        // remove the job
+        workQueue.DeQueue() ;
+        // CAL the wait of new job
+        workQueue.GetFront( aJob ) ;
+        int wait = newEvent.DEvent.departure - aJob.arrival ;
+        workQueue.PutWaitInFront( wait ) ;
+    } // else
 
 } // Proccess Departure
 
@@ -538,15 +581,9 @@ int main(){
 
         } // if
         else if( cmd == 2 ) {
-                ;
-/*
-            Simulation aSimulation ;
-            string fileName ;
-            cout << "file name:" ;
-            cin >> fileName ;
-            aSimulation.LoadJobList( fileName ) ;
-            aSimulation.Simulate() ;
-*/
+            Simulation cpu ;
+            cpu.Simulate() ;
+
         } // else if cmd == 2
         else
             cout << "Unknown command.\n" ;
