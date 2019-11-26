@@ -1,4 +1,4 @@
-// 10720111 ?喳???10720107 ?喃?銝?
+// 10720111 陳少暉 10720107 陳丕中
 
 #include<iostream>
 #include<cstdio>
@@ -10,7 +10,7 @@ using namespace std ;
 
 struct Job {
 
-    // 瘥極雿?撣嗆?????
+    // 每個工作所帶有的資料
     int ID ;
     int arrival ;
     int duration ;
@@ -28,7 +28,7 @@ struct DoneJob {
 };
 
 class JobList {
-    // 摮撌乩?????
+    // 存放工作的清單
 
     vector<Job> aList ;
 
@@ -92,7 +92,7 @@ void JobList::PrintAll(){
 } // PrintAll
 
 void JobList::Sort( clock_t &t ){
-    // ?究hell sort撠霈敺??啣之??
+    // 用shell sort將其變為從小到大排序
     t = clock() ;
     for ( int gap = aList.size()/2 ; gap > 0 ; gap = gap / 2 )
         for ( int i = gap ; i < aList.size() ; i++ ) {
@@ -111,7 +111,7 @@ void JobList::Sort( clock_t &t ){
 } // Sort
 
 bool JobList::Load( string fileName, clock_t &t ) {
-    // 霈瑼?
+    // 讀檔
     FILE *infile = NULL ;
     bool success = false ;
     t = clock() ;
@@ -143,7 +143,7 @@ bool JobList::Load( string fileName, clock_t &t ) {
 } // Load
 
 bool JobList::Load( string fileName ) {
-    // 霈瑼?
+    // 讀檔
     FILE *infile = NULL ;
     bool success = false ;
 
@@ -268,8 +268,8 @@ bool JobQueue::IsEmpty() {
         return false ;
 } // isEmpty()
 
-void JobQueue::EnQueue ( Job newJob ) { // enQueue() ?啣?
-   // 撠镼踵?司ueue
+void JobQueue::EnQueue ( Job newJob ) { // enQueue() 新增
+   // 將東西放入queue
 	QueueNode * newPtr = new QueueNode ;
 	newPtr->aJob = newJob ;
 	newPtr->aJob.wait = 0 ;
@@ -284,8 +284,8 @@ void JobQueue::EnQueue ( Job newJob ) { // enQueue() ?啣?
     length++ ;
 } // enQueue()
 
-void JobQueue::DeQueue () { // deQueue 蝘駁
-    // 撠镼踵?歌ueue
+void JobQueue::DeQueue () { // deQueue 移除
+    // 將東西拿出queue
 
 	if ( IsEmpty() ) {
 		printf( "is Empty!") ;
@@ -307,8 +307,8 @@ void JobQueue::DeQueue () { // deQueue 蝘駁
 
 } //deQueue()
 
-void JobQueue::GetFront ( Job &aJob ) { // getFront() ?瑕?
-    // ?ueue???臭?暻?
+void JobQueue::GetFront ( Job &aJob ) { // getFront() 擷取
+    // 看queue最前面是什麼
 
 	if ( IsEmpty() )
 	    printf("is Empty!!") ;
@@ -325,7 +325,7 @@ void JobQueue::GetBack( Job &aJob ) {
         aJob = backPtr->aJob ;
 } // GetBack
 
-void JobQueue::DeQueue( Job &aJob ) { // deQueue() ?瑕?敺??
+void JobQueue::DeQueue( Job &aJob ) { // deQueue() 擷取後刪除
     if( IsEmpty() ) {
     	printf("is Empty!") ;
 	} // if
@@ -334,7 +334,7 @@ void JobQueue::DeQueue( Job &aJob ) { // deQueue() ?瑕?敺??
 		DeQueue() ;
 	} // else
 
-} // ?瑕?敺??
+} // 擷取後刪除
 
 int JobQueue::Length() {
     return length ;
