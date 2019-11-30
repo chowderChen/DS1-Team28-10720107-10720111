@@ -1,3 +1,5 @@
+// 10720107 陳丕中 10720111 陳少暉 
+
 #include<iostream>
 #include<string>
 #include<vector>
@@ -27,27 +29,24 @@ class ClassList {
 		sortTime = 0 ;
 	} // ClassList
 	
-	bool Load() ;
+	bool Load( string fileName ) ;
 	void Export() ;
 	void Print() ;
 	void Merge( int first, int mid, int last ) ;
 	void MergeSort( int first, int last );
 	void QuickSort( int first, int last ) ;
 	void Partition( int first, int last, int &pivotIndex ) ;
-	void Sort() ;
+	void DoMSort() ;
+	void DoQSort() ;
 	
 }; // class ClassList
 
-bool ClassList::Load( ) {
+bool ClassList::Load( string fileName ) {
     // Load a file, turn it into a vector
-    
-    cout << "File number: " ;
-    cin >> fileNum ;
     
     FILE *infile = NULL ;
     bool success = false ;
-	string fileName = "" ;
-    fileName = "input" + fileNum + ".txt" ;
+    fileName = "input" + fileName + ".txt" ;
     infile = fopen(fileName.c_str(), "r" ) ;
 
 	if ( infile == NULL )
@@ -223,23 +222,60 @@ void ClassList::QuickSort( int first, int last ){
 	
 } // Qsort
 
-void ClassList::Sort() {
+void ClassList::DoMSort() {
 	
 	sortTime = clock() ;
 	MergeSort( 0, collegeSet.size() - 1 ) ;
 	sortTime = clock() - sortTime ;
 	cout << "Merge sort: " << sortTime << "ms\n" ;
-	
-	Print() ;
+
 	
 } // Sort
+
+void ClassList::DoQSort() {
+	
+	sortTime = clock() ;
+	QuickSort( 0, collegeSet.size() - 1 ) ;
+	sortTime = clock() - sortTime ;
+	cout << "Quick sort: " << sortTime << "ms\n" ;
+	Print() ;
+	
+} // DoQ
 
 int main() {
 
 	int cmd = -1 ;
-	ClassList classList ;
-	classList.Load() ;
-	classList.Sort() ;
+	cout << "(0)Exit\n(1)Selection & Bubble sort\n(2)Merge & Quick sort\nCommand: " ;
+	cin >> cmd ;
+	while ( cmd != 0 ) {
+		
+		if ( cmd == 1 )
+			;
+		else if ( cmd == 2 ) {
+			cout << "File number: " ;
+			string fileNum ;
+			cin >> fileNum ;
+			ClassList classListM ;
+			ClassList classListQ ;
+			if ( classListM.Load( fileNum ) ) {
+				
+				classListQ.Load( fileNum ) ;
+				classListM.DoMSort() ;
+				classListQ.DoQSort() ;
+				
+			} // if
+			else
+				cout << "File not found.\n" ;
+			
+		} // else if
+		else
+			cout << "Command not found.\n" ;
+			
+		cout << "(0)Exit\n(1)Selection & Bubble sort\n(2)Merge & Quick sort\nCommand: " ;
+		cin >> cmd ;
+			
+	} // while cmd != 0
+	
 	return 0 ;
 
 } // main
