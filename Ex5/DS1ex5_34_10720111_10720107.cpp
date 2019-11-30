@@ -30,9 +30,10 @@ class ClassList {
 	bool Load() ;
 	void Export() ;
 	void Print() ;
-	void Merge() ;
-	void MergeSort();
+	void Merge( int first, int mid, int last ) ;
+	void MergeSort( int first, int last );
 	void QuickSort() ;
+	void Sort() ;
 	
 }; //
 
@@ -122,23 +123,67 @@ void ClassList::Export() {
 void ClassList::Print() {
 	
 	for ( int i = 0 ; i < collegeSet.size() ; i++ )
-		cout << "[" << i + 1 << "] " 
-			<< collegeSet[i].content << "\n" ;
+		cout << collegeSet[i].content << "\n" ;
 		
 } // Print
 
-void ClassList::Merge() {
+void ClassList::Merge( int first, int mid, int last ) {
+	
+	vector< CollegeType > tempList ;
+	
+	int first1 = first, last1 = mid 
+		, first2 = mid + 1, last2 = last
+		, index = first ;
+		
+	for ( ; ( first1 <= last1 ) && ( first2 <= last2 ) ; ++index ) {
+		// compare the smallest one of eacg list
+		// take the smaller one 
+		if ( collegeSet[first1].numGraduate >=  collegeSet[first2].numGraduate ) {
+			
+			tempList.push_back( collegeSet[first1] ) ;
+			++first1 ;
+			
+		} // if
+		else {
+			
+			tempList.push_back( collegeSet[first2] )  ;
+			++first2 ;
+			
+		} // else
+		
+	} // for
+	
+	// attach  
+	for ( ; first1 <= last1 ; ++first1, ++index )
+		tempList.push_back( collegeSet[first1] ) ;
+		
+	for ( ; first2 <= last2 ; ++first2, ++index )
+		tempList.push_back( collegeSet[first2] ) ;
+		
+	// replace the original one with new one
+	
+	for ( index = first ; index <= last ; ++index ) { 
+		collegeSet[index] = tempList[index - first] ;
+	} // for 
+	 
 	
 } // Merge
 
-void ClassList::MergeSort() {
+void ClassList::MergeSort( int first, int last ) {
 	
-	// if only one left in list
-	
+	// if only one left in list, do nothing
 	// else 
-	// devide into two list, call itself
-	// compare from the first, take out the small one, compare again
-	// if the same, take out the front one of original list 
+	// devide into two list, sort each one
+	// compare from the first index of each, take out the smaller one, compare again
+	// if the same, take out the front list one 
+
+	if ( first < last ) {
+		
+		int mid = ( first + last ) / 2 ;
+		MergeSort( first, mid ) ;
+		MergeSort( mid + 1, last ) ;
+		Merge( first, mid, last ) ;
+	} // if
 	
 } // 
 
@@ -148,11 +193,18 @@ void ClassList::QuickSort(){
 	
 } // 
 
+void ClassList::Sort() {
+	
+	MergeSort( 0, collegeSet.size() - 1 ) ;
+	Print() ;
+	
+} // Sort
+
 int main() {
 
 	ClassList classList ;
 	classList.Load() ;
-	classList.Print() ;
+	classList.Sort() ;
 	return 0 ;
 
 } // main
