@@ -44,6 +44,7 @@ class ClassList {
 bool ClassList::Load( string fileName ) {
     // Load a file, turn it into a vector
     
+    fileNum = fileName ;
     FILE *infile = NULL ;
     bool success = false ;
     fileName = "input" + fileName + ".txt" ;
@@ -95,31 +96,28 @@ bool ClassList::Load( string fileName ) {
 	return success ;
 
 } // Load
-/*
+
 void ClassList::Export() {
     // Export sorted list to .txt
 
     FILE *outFile = NULL ;
-    bool success = false ;
+    string fileName ;
     fileName = sortType + "_sort" + fileNum + ".txt" ; 
     outFile = fopen( fileName.c_str(), "w" ) ;
     if ( outFile == NULL )
         ;
     else {
 
-        fprintf( outFile, "OID\tArrival\tDuration\tTimeOut\n" ) ;
-        for ( int i = 0 ; i < aList.size() ; i++ ) {
-            fprintf( outFile, "%d\t%d\t%d\t%d\n", aList.at( i ).ID, aList.at( i ).arrival
-                    , aList.at( i ).duration, aList.at( i ).timeout ) ;
+        for ( int i = 0 ; i < collegeSet.size() ; i++ ) {
+            fprintf( outFile, "%s\n", collegeSet.at( i ).content.c_str() ) ;
         } // for
 
-        success = true ;
         fclose( outFile ) ;
 
     } // else
 
 } // Export
-*/
+
 void ClassList::Print() {
 	
 	for ( int i = 0 ; i < collegeSet.size() ; i++ )
@@ -224,21 +222,23 @@ void ClassList::QuickSort( int first, int last ){
 
 void ClassList::DoMSort() {
 	
+	sortType = "merge" ;
 	sortTime = clock() ;
 	MergeSort( 0, collegeSet.size() - 1 ) ;
 	sortTime = clock() - sortTime ;
 	cout << "Merge sort: " << sortTime << "ms\n" ;
-
+	Export() ;
 	
 } // Sort
 
 void ClassList::DoQSort() {
 	
+	sortType = "quick" ;
 	sortTime = clock() ;
 	QuickSort( 0, collegeSet.size() - 1 ) ;
 	sortTime = clock() - sortTime ;
 	cout << "Quick sort: " << sortTime << "ms\n" ;
-	Print() ;
+	Export() ;
 	
 } // DoQ
 
