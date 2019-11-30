@@ -32,10 +32,11 @@ class ClassList {
 	void Print() ;
 	void Merge( int first, int mid, int last ) ;
 	void MergeSort( int first, int last );
-	void QuickSort() ;
+	void QuickSort( int first, int last ) ;
+	void Partition( int first, int last, int &pivotIndex ) ;
 	void Sort() ;
 	
-}; //
+}; // class ClassList
 
 bool ClassList::Load( ) {
     // Load a file, turn it into a vector
@@ -187,21 +188,55 @@ void ClassList::MergeSort( int first, int last ) {
 	
 } // 
 
-void ClassList::QuickSort(){
+void ClassList::Partition( int first, int last, int &pivotIndex ) {
 	
+	int lastS1 = first, firstUnknown = first + 1 ;
+	CollegeType tempCollege ;
+	while ( firstUnknown <= last ) {
+		if ( collegeSet.at( firstUnknown ).numGraduate > collegeSet.at( pivotIndex ).numGraduate ) {
+			++lastS1 ;
+			tempCollege = collegeSet.at( firstUnknown ) ;
+			collegeSet.at( firstUnknown ) = collegeSet.at( lastS1 ) ;
+			collegeSet.at( lastS1 ) = tempCollege ;
+		} // if
+		
+		firstUnknown++ ;
+	} // while
 	
+	tempCollege = collegeSet.at( lastS1 ) ;
+	collegeSet.at( lastS1 ) = collegeSet.at( pivotIndex ) ;
+	collegeSet.at( pivotIndex ) = tempCollege ;
 	
-} // 
+	pivotIndex = lastS1 ;
+	
+} // Partition
+
+void ClassList::QuickSort( int first, int last ){
+	
+	if ( first < last ) {
+		int pivotIndex = first ;
+		Partition( first, last, pivotIndex ) ;
+		QuickSort( first, pivotIndex - 1 ) ;
+		QuickSort( pivotIndex + 1, last ) ;
+		
+	} // if
+	
+} // Qsort
 
 void ClassList::Sort() {
 	
+	sortTime = clock() ;
 	MergeSort( 0, collegeSet.size() - 1 ) ;
+	sortTime = clock() - sortTime ;
+	cout << "Merge sort: " << sortTime << "ms\n" ;
+	
 	Print() ;
 	
 } // Sort
 
 int main() {
 
+	int cmd = -1 ;
 	ClassList classList ;
 	classList.Load() ;
 	classList.Sort() ;
