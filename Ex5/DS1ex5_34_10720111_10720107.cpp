@@ -259,6 +259,7 @@ bool ClassList::IsSorted() {
 
 
 void ClassList::DoBSort() { // 泡沫排序
+	sortType = "bubble" ;
 
 	if ( IsSorted() ) {
 		sortTime = 0 ;
@@ -284,6 +285,7 @@ void ClassList::DoBSort() { // 泡沫排序
 } // DoB
 
 void ClassList::DoSSort() { // 選擇排序 
+	sortType = "selection" ;
 	sortTime = clock() ;
 	if ( IsSorted() ) {
 		sortTime = 0 ;
