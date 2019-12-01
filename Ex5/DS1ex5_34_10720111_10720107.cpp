@@ -279,6 +279,8 @@ void ClassList::DoBSort() { // 泡沫排序
     	sortTime = clock() - sortTime ;
     } // else
 	
+	cout << "Bubble sort: " << sortTime << "ms\n" ;
+	Export() ;
 } // DoB
 
 void ClassList::DoSSort() { // 選擇排序 
@@ -308,9 +310,11 @@ void ClassList::DoSSort() { // 選擇排序
 		} // for
 		
 		sortTime = clock() - sortTime ;
+
 	} // else
 	
-	
+	cout << "Selection sort: " << sortTime << "ms\n" ;
+	Export() ;
 	
 } // DoS
 
