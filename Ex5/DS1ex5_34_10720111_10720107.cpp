@@ -1,4 +1,4 @@
-// 10720107 ≥Ø•A§§ 10720111 ≥Ø§÷∑u 
+// 10720107 Èô≥‰∏ï‰∏≠ 10720111 Èô≥Â∞ëÊöâ 
 
 #include<iostream>
 #include<string>
@@ -38,6 +38,9 @@ class ClassList {
 	void Partition( int first, int last, int &pivotIndex ) ;
 	void DoMSort() ;
 	void DoQSort() ;
+	void DoBSort() ;
+	void DoSSort() ;
+	bool isSorded() ;
 	
 }; // class ClassList
 
@@ -242,6 +245,56 @@ void ClassList::DoQSort() {
 	
 } // DoQ
 
+bool isSorted() {
+	
+} // isSorted()
+
+void ClassList::DoBSort() { // Ê≥°Ê≤´ÊéíÂ∫è
+
+	if ( isSorted() ) {
+		sortTime = 0 ;
+	} // if
+	else {
+		sortTime = clock() ;
+   		for ( int i = 0 ; i < collegeSet.size() - 1 ; i ++ ) {
+  	    	for ( int j = i ; j < collegeSet.size() - 1 ; j ++ ) {
+    			if ( collegeSet.at(j).numGraduate > collegeSet.at(j+1).numGraduate ) {
+    				int tempNum ;
+    				tempNum = collegeSet.at(j).numGraduate ;
+    				collegeSet.at(j+1).numGraduate = collegeSet.at(j).numGraduate ;
+    				collegeSet.at(j).numGraduate = collegeSet.at(j+1).numGraduate ;
+				} // if
+        	} // for
+    	} // for
+    	
+    	sortTime = clock() - sortTime ;
+    } // else
+	
+} // DoB
+
+void ClassList::DoSSort() {
+	sortTime = clock() ;
+	if ( isSorted() ) {
+	} // if
+	else {
+		sortTime = clock() ;
+		for ( int i = 0 ; i < collegeSet.size() ; i++ ) {
+			for( int j = i ; j < collegeSet.size() ; j++ ) {
+				if ( collegeSet.at(j).numGraduate < collegeSet.at(i).numGraduate ) {
+                    int tempNum ;
+                    tempNum = collegeSet.at(j).numGraduate ;
+                    collegeSet.at(i).numGraduate = collegeSet.at(j).numGraduate ;
+                    collegeSet.at(j).numGraduate = collegeSet.at(i).numGraduate ;
+				} // if
+			} // for
+		} // for
+		
+		sortTime = clock() - sortTime ;
+	} // else
+	
+	
+} // DoS
+
 int main() {
 
 	int cmd = -1 ;
@@ -249,8 +302,19 @@ int main() {
 	cin >> cmd ;
 	while ( cmd != 0 ) {
 		
-		if ( cmd == 1 )
-			;
+		if ( cmd == 1 ) {
+			cout << "File Number" ;
+			string fileNum ;
+			cin >> fileNum ;
+			ClassList classListB ; // BubbleSort
+			ClassList classListC ; // SelectionSort
+			if ( classListS.Load( fileNum ) ) {
+				classListB.Load( fileNum ) ;
+				classListS.DoMSort() ;
+				classListB.DoQSort() ;
+				
+			}
+		} //if
 		else if ( cmd == 2 ) {
 			cout << "File number: " ;
 			string fileNum ;
