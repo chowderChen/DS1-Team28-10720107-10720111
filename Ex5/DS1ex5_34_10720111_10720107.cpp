@@ -272,21 +272,30 @@ void ClassList::DoBSort() { // 泡沫排序
 	
 } // DoB
 
-void ClassList::DoSSort() {
+void ClassList::DoSSort() { // 選擇排序 
 	sortTime = clock() ;
 	if ( isSorted() ) {
 	} // if
 	else {
 		sortTime = clock() ;
 		for ( int i = 0 ; i < collegeSet.size() ; i++ ) {
-			for( int j = i ; j < collegeSet.size() ; j++ ) {
-				if ( collegeSet.at(j).numGraduate < collegeSet.at(i).numGraduate ) {
-                    int tempNum ;
-                    tempNum = collegeSet.at(j).numGraduate ;
-                    collegeSet.at(i).numGraduate = collegeSet.at(j).numGraduate ;
-                    collegeSet.at(j).numGraduate = collegeSet.at(i).numGraduate ;
+			int j = i ;
+			int smallAt = j ;
+			int smallNum = collegeSet.at(j).numGraduate ;
+			j++ ;
+			while ( j < collegeSet.size() ) {
+				if ( smallAt > collegeSet.at(j).numGraduate ) {
+					smallAt = j ;
+					smallNum = collegeSet.at(j).numGraduate ;
 				} // if
-			} // for
+				
+				j++ ;
+			} // while
+			
+			if ( smallAt < j ) {
+            	collegeSet.at(j).numGraduate = collegeSet.at(i).numGraduate ;
+            	collegeSet.at(i).numGraduate = smallNum ; 
+            } // if
 		} // for
 		
 		sortTime = clock() - sortTime ;
