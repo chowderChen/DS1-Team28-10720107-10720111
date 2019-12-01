@@ -40,7 +40,7 @@ class ClassList {
 	void DoQSort() ;
 	void DoBSort() ;
 	void DoSSort() ;
-	bool isSorded() ;
+	bool IsSorted() ;
 	
 }; // class ClassList
 
@@ -245,13 +245,22 @@ void ClassList::DoQSort() {
 	
 } // DoQ
 
-bool isSorted() {
+bool ClassList::IsSorted() {
+	for( int i = 0 ; i < collegeSet.size() - 1 ; i++ ) {
+		if ( collegeSet.at(i).numGraduate > collegeSet.at(i+1).numGraduate ) {
+			return false ;
+		} // if
+	} // for
 	
+	return true ;
 } // isSorted()
+
+
+
 
 void ClassList::DoBSort() { // 泡沫排序
 
-	if ( isSorted() ) {
+	if ( IsSorted() ) {
 		sortTime = 0 ;
 	} // if
 	else {
@@ -274,10 +283,10 @@ void ClassList::DoBSort() { // 泡沫排序
 
 void ClassList::DoSSort() { // 選擇排序 
 	sortTime = clock() ;
-	if ( isSorted() ) {
+	if ( IsSorted() ) {
+		sortTime = 0 ;
 	} // if
 	else {
-		sortTime = clock() ;
 		for ( int i = 0 ; i < collegeSet.size() ; i++ ) {
 			int j = i ;
 			int smallAt = j ;
@@ -302,6 +311,7 @@ void ClassList::DoSSort() { // 選擇排序
 	} // else
 	
 	
+	
 } // DoS
 
 int main() {
@@ -316,13 +326,16 @@ int main() {
 			string fileNum ;
 			cin >> fileNum ;
 			ClassList classListB ; // BubbleSort
-			ClassList classListC ; // SelectionSort
+			ClassList classListS ; // SelectionSort
 			if ( classListS.Load( fileNum ) ) {
 				classListB.Load( fileNum ) ;
 				classListS.DoMSort() ;
 				classListB.DoQSort() ;
 				
-			}
+			} // if
+			else {
+				cout << "File not found.\n" ;
+			} // else
 		} //if
 		else if ( cmd == 2 ) {
 			cout << "File number: " ;
