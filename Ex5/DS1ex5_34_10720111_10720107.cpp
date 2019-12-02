@@ -41,7 +41,7 @@ class ClassList {
 	void DoBSort() ;
 	void DoSSort() ;
 	bool IsSorted() ;
-	void swap( CT item1, CT item2 ) ;
+
 	
 }; // class ClassList
 
@@ -302,24 +302,20 @@ void ClassList::DoSSort() { // 選擇排序
 	else {
 		for ( int i = 0 ; i < collegeSet.size() ; i++ ) {
 			int j = i ;
-			int smallAt = j ;
-			int smallNum = collegeSet.at(j).numGraduate ;
-			j++ ;
+			int bigAt = j ;
+
 			while ( j < collegeSet.size() ) {
-				if ( smallAt > collegeSet.at(j).numGraduate ) {
-					smallAt = j ;
-					smallNum = collegeSet.at(j).numGraduate ;
+				if ( collegeSet.at(bigAt).numGraduate < collegeSet.at(j).numGraduate ) {
+					CT temp = collegeSet.at(j);
+					collegeSet.at(j) = collegeSet.at(bigAt) ;
+					collegeSet.at(bigAt) = temp ;
+					
 				} // if
 				
 				j++ ;
 			} // while
 			
-			if ( smallNum < collegeSet.at(i).numGraduate ) {
-				// swap( collegeSet.at(i), collegeSet.at(j) ) ;
-				CT temp = collegeSet.at(smallAt) ;
-            	collegeSet.at(smallAt) = collegeSet.at(i) ;
-            	collegeSet.at(i) = temp ; 
-            } // if
+
 		} // for
 		
 		sortTime = clock() - sortTime ;
