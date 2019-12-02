@@ -294,7 +294,7 @@ void ClassList::DoBSort() { // 泡沫排序
 } // DoB
 
 void ClassList::DoSSort() { // 選擇排序 
-    sortType = "selection" ;
+    sortType = "select" ;
 	sortTime = clock() ;
 	if ( IsSorted() ) {
 		sortTime = 0 ;
@@ -342,8 +342,8 @@ int main() {
 			ClassList classListS ; // SelectionSort
 			if ( classListS.Load( fileNum ) ) {
 				classListB.Load( fileNum ) ;
-				classListS.DoBSort() ;
-				classListB.DoSSort() ;
+				classListS.DoSSort() ;
+				classListB.DoBSort() ;
 				
 			} // if
 			else {
