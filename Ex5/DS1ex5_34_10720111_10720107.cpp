@@ -259,8 +259,7 @@ bool ClassList::IsSorted() {
 
 
 void ClassList::DoBSort() { // 泡沫排序
-	sortType = "bubble" ;
-
+    sortType = "bubble" ;
 	if ( IsSorted() ) {
 		sortTime = 0 ;
 	} // if
@@ -285,7 +284,7 @@ void ClassList::DoBSort() { // 泡沫排序
 } // DoB
 
 void ClassList::DoSSort() { // 選擇排序 
-	sortType = "selection" ;
+    sortType = "selection" ;
 	sortTime = clock() ;
 	if ( IsSorted() ) {
 		sortTime = 0 ;
@@ -335,8 +334,8 @@ int main() {
 			ClassList classListS ; // SelectionSort
 			if ( classListS.Load( fileNum ) ) {
 				classListB.Load( fileNum ) ;
-				classListS.DoMSort() ;
-				classListB.DoQSort() ;
+				classListS.DoBSort() ;
+				classListB.DoSSort() ;
 				
 			} // if
 			else {
