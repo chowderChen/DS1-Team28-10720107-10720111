@@ -300,16 +300,22 @@ void ClassList::DoSSort() { // ¿ï¾Ü±Æ§Ç
 	for ( int i = 0 ; i < collegeSet.size() ; i++ ) {
 		int j = i ;
 		int bigAt = j ;
+		bool small = false ;
 
 		while ( j < collegeSet.size() ) {
 			if ( collegeSet.at(bigAt).numGraduate < collegeSet.at(j).numGraduate ) {
-				CT temp = collegeSet.at(j);
-				collegeSet.at(j) = collegeSet.at(bigAt) ;
-				collegeSet.at(bigAt) = temp ;
+                bigAt = j ;
+                small = true ;
 			} // if
 				
 			j++ ;
 		} // while
+		
+		if( small ) {
+			CT temp = collegeSet.at(i);
+			collegeSet.at(i) = collegeSet.at(bigAt) ;
+			collegeSet.at(bigAt) = temp ;
+		} // if
 			
 
 	} // for
