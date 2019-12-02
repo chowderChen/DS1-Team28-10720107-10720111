@@ -1,4 +1,4 @@
-// 10720107 é™³ä¸•ä¸­ 10720111 é™³å°‘æš‰ 
+// 10720107 ³¯¥A¤¤ 10720111 ³¯¤Ö·u 
 
 #include<iostream>
 #include<string>
@@ -267,7 +267,7 @@ bool ClassList::IsSorted() {
 
 
 
-void ClassList::DoBSort() { // æ³¡æ²«æ’åº
+void ClassList::DoBSort() { // ªwªj±Æ§Ç
     sortType = "bubble" ;
 	if ( IsSorted() ) {
 		sortTime = 0 ;
@@ -293,7 +293,7 @@ void ClassList::DoBSort() { // æ³¡æ²«æ’åº
 	Export() ;
 } // DoB
 
-void ClassList::DoSSort() { // é¸æ“‡æ’åº 
+void ClassList::DoSSort() { // ¿ï¾Ü±Æ§Ç 
     sortType = "select" ;
 	sortTime = clock() ;
 
