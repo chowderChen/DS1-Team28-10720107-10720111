@@ -41,6 +41,7 @@ class ClassList {
 	void DoBSort() ;
 	void DoSSort() ;
 	bool IsSorted() ;
+	void swap( CT item1, CT item2 ) ;
 	
 }; // class ClassList
 
@@ -245,6 +246,14 @@ void ClassList::DoQSort() {
 	
 } // DoQ
 
+//void ClassList::swap( CT item1, CT item2 ) {
+//	CT temp ;
+//	temp = item1 ;
+//	item1 = item2 ;
+//	item2 = temp ;
+//} // swap
+
+
 bool ClassList::IsSorted() {
 	for( int i = 0 ; i < collegeSet.size() - 1 ; i++ ) {
 		if ( collegeSet.at(i).numGraduate > collegeSet.at(i+1).numGraduate ) {
@@ -265,13 +274,14 @@ void ClassList::DoBSort() { // 泡沫排序
 	} // if
 	else {
 		sortTime = clock() ;
-   		for ( int i = 0 ; i < collegeSet.size() - 1 ; i ++ ) {
-  	    	for ( int j = i ; j < collegeSet.size() - 1 ; j ++ ) {
-    			if ( collegeSet.at(j).numGraduate > collegeSet.at(j+1).numGraduate ) {
-    				int tempNum ;
-    				tempNum = collegeSet.at(j).numGraduate ;
-    				collegeSet.at(j+1).numGraduate = collegeSet.at(j).numGraduate ;
-    				collegeSet.at(j).numGraduate = collegeSet.at(j+1).numGraduate ;
+   		for ( int i = collegeSet.size() - 1 ; i > 0 ; i -- ) {
+  	    	for ( int j = 0 ; j < i ; j ++ ) {
+    			if ( collegeSet.at(j+1).numGraduate > collegeSet.at(j).numGraduate ) {
+    				//swap( collegeSet.at(j), collegeSet.at(j+1) ) ;
+    				CT tempItem ;
+    				tempItem = collegeSet.at(j) ;
+    				collegeSet.at(j) = collegeSet.at(j+1) ;
+    				collegeSet.at(j+1) = tempItem ;
 				} // if
         	} // for
     	} // for
@@ -305,8 +315,10 @@ void ClassList::DoSSort() { // 選擇排序
 			} // while
 			
 			if ( smallNum < collegeSet.at(i).numGraduate ) {
-            	collegeSet.at(j).numGraduate = collegeSet.at(i).numGraduate ;
-            	collegeSet.at(i).numGraduate = smallNum ; 
+				// swap( collegeSet.at(i), collegeSet.at(j) ) ;
+				CT temp = collegeSet.at(smallAt) ;
+            	collegeSet.at(smallAt) = collegeSet.at(i) ;
+            	collegeSet.at(i) = temp ; 
             } // if
 		} // for
 		
