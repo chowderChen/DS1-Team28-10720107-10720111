@@ -296,31 +296,27 @@ void ClassList::DoBSort() { // 泡沫排序
 void ClassList::DoSSort() { // 選擇排序 
     sortType = "select" ;
 	sortTime = clock() ;
-	if ( IsSorted() ) {
-		sortTime = 0 ;
-	} // if
-	else {
-		for ( int i = 0 ; i < collegeSet.size() ; i++ ) {
-			int j = i ;
-			int bigAt = j ;
 
-			while ( j < collegeSet.size() ) {
-				if ( collegeSet.at(bigAt).numGraduate < collegeSet.at(j).numGraduate ) {
-					CT temp = collegeSet.at(j);
-					collegeSet.at(j) = collegeSet.at(bigAt) ;
-					collegeSet.at(bigAt) = temp ;
-					
-				} // if
+	for ( int i = 0 ; i < collegeSet.size() ; i++ ) {
+		int j = i ;
+		int bigAt = j ;
+
+		while ( j < collegeSet.size() ) {
+			if ( collegeSet.at(bigAt).numGraduate < collegeSet.at(j).numGraduate ) {
+				CT temp = collegeSet.at(j);
+				collegeSet.at(j) = collegeSet.at(bigAt) ;
+				collegeSet.at(bigAt) = temp ;
+			} // if
 				
-				j++ ;
-			} // while
+			j++ ;
+		} // while
 			
 
-		} // for
+	} // for
 		
-		sortTime = clock() - sortTime ;
+	sortTime = clock() - sortTime ;
 
-	} // else
+
 	
 	cout << "Selection sort: " << sortTime << "ms\n" ;
 	Export() ;
