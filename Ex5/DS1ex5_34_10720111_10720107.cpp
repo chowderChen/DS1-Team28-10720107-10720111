@@ -304,7 +304,7 @@ void ClassList::DoSSort() { // 選擇排序
 				j++ ;
 			} // while
 			
-			if ( smallAt < j ) {
+			if ( smallNum < collegeSet.at(i).numGraduate ) {
             	collegeSet.at(j).numGraduate = collegeSet.at(i).numGraduate ;
             	collegeSet.at(i).numGraduate = smallNum ; 
             } // if
