@@ -41,6 +41,8 @@ class ClassList {
 	void DoBSort() ;
 	void DoSSort() ;
 	bool IsSorted() ;
+	void RadixSort( int first, int last ) ;
+	void DoRSort() ;
 
 	
 }; // class ClassList
@@ -246,14 +248,6 @@ void ClassList::DoQSort() {
 	
 } // DoQ
 
-//void ClassList::swap( CT item1, CT item2 ) {
-//	CT temp ;
-//	temp = item1 ;
-//	item1 = item2 ;
-//	item2 = temp ;
-//} // swap
-
-
 bool ClassList::IsSorted() {
 	for( int i = 0 ; i < collegeSet.size() - 1 ; i++ ) {
 		if ( collegeSet.at(i).numGraduate > collegeSet.at(i+1).numGraduate ) {
@@ -263,9 +257,6 @@ bool ClassList::IsSorted() {
 	
 	return true ;
 } // isSorted()
-
-
-
 
 void ClassList::DoBSort() { // ªwªj±Æ§Ç
     sortType = "bubble" ;
@@ -329,10 +320,52 @@ void ClassList::DoSSort() { // ¿ï¾Ü±Æ§Ç
 	
 } // DoS
 
+void ClassList::RadixSort( int first, int last ) {
+	
+	CollegeType temp[10][collegeSet.size()] ;
+	CollegeType maxData ;
+	int i, counter[10] = {0} ;
+	for ( maxData = collegeSet.at( first ), i = first + 1 ; i <= last ; i++ )
+		// find largest number
+		if ( maxData.numGraduate < collegeSet.at(i).numGraduate )
+			maxData = collegeSet.at(i) ;
+			
+	for ( int base = 1 ; ( maxData.numGraduate / base ) > 0 ; base*=10 ) {
+		// turn into group
+		for ( i = first ; i <= last ; i++ ) {
+			int LSD = ( collegeSet.at(i).numGraduate / base ) % 10 ;
+			temp[LSD][counter[LSD]] = collegeSet.at(i) ;
+			counter[LSD]++ ;
+		} // for
+		// get result back
+		int k = 0 ;
+		for ( i = 9 ; i >= 0 ; i-- )
+			if ( counter[i] > 0 ) {
+				for( int j = 0 ; j < counter[i] ; j++, k++ )
+					collegeSet.at(k) = temp[i][j] ;
+				
+				counter[i] = 0 ;
+			} // if
+		
+	} // for
+		
+} // radix sort
+
+void ClassList::DoRSort() {
+	
+	sortType = "radix" ;
+	sortTime = clock() ;
+	RadixSort( 0, collegeSet.size() - 1 ) ;
+	sortTime = clock() - sortTime ;
+	cout << "Radix sort: " << sortTime << "ms\n" ;
+	Export() ;
+	
+} // RSort
+
 int main() {
 
 	int cmd = -1 ;
-	cout << "(0)Exit\n(1)Selection & Bubble sort\n(2)Merge & Quick sort\nCommand: " ;
+	cout << "(0)Exit\n(1)Selection & Bubble sort\n(2)Merge & Quick sort\n(3)Radix sort\nCommand: " ;
 	cin >> cmd ;
 	while ( cmd != 0 ) {
 		
@@ -369,10 +402,24 @@ int main() {
 				cout << "File not found.\n" ;
 			
 		} // else if
+		else if ( cmd == 3 ) {
+			cout << "File number: " ;
+			string fileNum ;
+			cin >> fileNum ;
+			ClassList classListR ;
+			if ( classListR.Load( fileNum ) ) {
+				
+				classListR.DoRSort() ;
+				
+			} // if
+			else
+				cout << "File not found.\n" ;
+			
+		} // else if
 		else
 			cout << "Command not found.\n" ;
 			
-		cout << "(0)Exit\n(1)Selection & Bubble sort\n(2)Merge & Quick sort\nCommand: " ;
+		cout << "(0)Exit\n(1)Selection & Bubble sort\n(2)Merge & Quick sort\n(3)Radix sort\nCommand: " ;
 		cin >> cmd ;
 			
 	} // while cmd != 0
