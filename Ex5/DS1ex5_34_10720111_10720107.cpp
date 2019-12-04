@@ -43,6 +43,7 @@ class ClassList {
 	bool IsSorted() ;
 	void RadixSort( int first, int last ) ;
 	void DoRSort() ;
+	void SortTimeCompare( string fileName ) ;
 
 	
 }; // class ClassList
@@ -362,10 +363,123 @@ void ClassList::DoRSort() {
 	
 } // RSort
 
+void ClassList::SortTimeCompare( string fileName ) {
+	// run each sort type 10 times to get each average sort time
+	vector< CollegeType > tempSet = collegeSet ;
+	clock_t averageSortTime = 0 ;
+	
+	// selection sort
+	for ( int times = 0 ; times < 10 ; times++  ) {
+		sortTime = clock() ;
+		for ( int i = 0 ; i < collegeSet.size() ; i++ ) {
+			int j = i ;
+			int bigAt = j ;
+			bool small = false ;
+	
+			while ( j < collegeSet.size() ) {
+				// search for the biggest
+				if ( collegeSet.at(bigAt).numGraduate < collegeSet.at(j).numGraduate ) {
+	                bigAt = j ;
+	                small = true ;
+				} // if
+					
+				j++ ;
+			} // while
+			// swap biggest to the front
+			if( small ) {
+				CT temp = collegeSet.at(i);
+				collegeSet.at(i) = collegeSet.at(bigAt) ;
+				collegeSet.at(bigAt) = temp ;
+			} // if
+				
+		} // for
+			
+		sortTime = clock() - sortTime ;
+		averageSortTime  = averageSortTime + sortTime ;
+		collegeSet = tempSet ;
+	} // for 10 times
+	
+	averageSortTime = averageSortTime / 10 ;
+	cout << "Selection sort: " << averageSortTime << " ms.\n" ;
+	averageSortTime = 0 ;
+	
+	// bubble sort
+	for ( int times = 0 ; times < 10 ; times++ ) {
+		if ( IsSorted() ) {
+			sortTime = 0 ;
+		} // if
+		else {
+			sortTime = clock() ;
+   			for ( int i = collegeSet.size() - 1 ; i > 0 ; i -- ) {
+  	    		for ( int j = 0 ; j < i ; j ++ ) {
+    				if ( collegeSet.at(j+1).numGraduate > collegeSet.at(j).numGraduate ) {
+    					//swap( collegeSet.at(j), collegeSet.at(j+1) ) ;
+    					CT tempItem ;
+    					tempItem = collegeSet.at(j) ;
+    					collegeSet.at(j) = collegeSet.at(j+1) ;
+    					collegeSet.at(j+1) = tempItem ;
+					} // if
+        		} // for
+    		} // for
+    	
+    		sortTime = clock() - sortTime ;
+    	} // else
+    	
+		averageSortTime  = averageSortTime + sortTime ;
+		collegeSet = tempSet ;
+	} // for 10 times
+	
+	averageSortTime = averageSortTime / 10 ;
+	cout << "Bubble sort: " << averageSortTime << " ms.\n" ;
+	averageSortTime = 0 ;
+	
+	// merge sort
+	for ( int times = 0 ; times < 10 ; times++ ) {
+		sortTime = clock() ;
+		MergeSort( 0, collegeSet.size() - 1 ) ;
+		sortTime = clock() - sortTime ;
+		
+		averageSortTime  = averageSortTime + sortTime ;
+		collegeSet = tempSet ;
+	} // for 10 times
+	
+	averageSortTime = averageSortTime / 10 ;
+	cout << "Merge sort: " << averageSortTime << " ms.\n" ;
+	averageSortTime = 0 ;
+	
+	// quick sort
+	for ( int times = 0 ; times < 10 ; times++ ) {
+		sortTime = clock() ;
+		QuickSort( 0, collegeSet.size() - 1 ) ;
+		sortTime = clock() - sortTime ;
+		
+		averageSortTime  = averageSortTime + sortTime ;
+		collegeSet = tempSet ;
+	} // for 10 times
+	
+	averageSortTime = averageSortTime / 10 ;
+	cout << "Quick sort: " << averageSortTime << " ms.\n" ;
+	averageSortTime = 0 ;
+	
+	// radix sort
+	for ( int times = 0 ; times < 10 ; times++ ) {
+		sortTime = clock() ;
+		RadixSort( 0, collegeSet.size() - 1 ) ;
+		sortTime = clock() - sortTime ;
+		
+		averageSortTime  = averageSortTime + sortTime ;
+		collegeSet = tempSet ;
+	} // for 10 times
+	
+	averageSortTime = averageSortTime / 10 ;
+	cout << "Radix sort: " << averageSortTime << " ms.\n" ;
+	
+} // compare
+
 int main() {
 
 	int cmd = -1 ;
-	cout << "(0)Exit\n(1)Selection & Bubble sort\n(2)Merge & Quick sort\n(3)Radix sort\nCommand: " ;
+	cout << "(0)Exit\n(1)Selection & Bubble sort\n(2)Merge & Quick sort\n(3)Radix sort\n(4)Compare\nCommand: " ;
 	cin >> cmd ;
 	while ( cmd != 0 ) {
 		
@@ -408,8 +522,21 @@ int main() {
 			cin >> fileNum ;
 			ClassList classListR ;
 			if ( classListR.Load( fileNum ) ) {
-				
 				classListR.DoRSort() ;
+			} // if
+			else
+				cout << "File not found.\n" ;
+			
+		} // else if
+		else if ( cmd == 4 ) {
+			
+			cout << "File number: " ;
+			string fileNum ;
+			cin >> fileNum ;
+			ClassList classList ;
+			if ( classList.Load( fileNum ) ) {
+				
+				classList.SortTimeCompare( fileNum ) ;
 				
 			} // if
 			else
@@ -419,7 +546,7 @@ int main() {
 		else
 			cout << "Command not found.\n" ;
 			
-		cout << "(0)Exit\n(1)Selection & Bubble sort\n(2)Merge & Quick sort\n(3)Radix sort\nCommand: " ;
+		cout << "(0)Exit\n(1)Selection & Bubble sort\n(2)Merge & Quick sort\n(3)Radix sort\n(4)Compare\nCommand: " ;
 		cin >> cmd ;
 			
 	} // while cmd != 0
