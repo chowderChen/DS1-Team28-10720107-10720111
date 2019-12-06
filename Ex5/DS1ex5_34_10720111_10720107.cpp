@@ -323,7 +323,10 @@ void ClassList::DoSSort() { // ¿ï¾Ü±Æ§Ç
 
 void ClassList::RadixSort( int first, int last ) {
 	
-	CollegeType temp[10][collegeSet.size()] ;
+	CollegeType **temp = new CollegeType*[10] ;
+	for ( int i = 0 ; i < 10 ; i++ )
+		temp[i] = new CollegeType[collegeSet.size()] ;
+		
 	CollegeType maxData ;
 	int i, counter[10] = {0} ;
 	for ( maxData = collegeSet.at( first ), i = first + 1 ; i <= last ; i++ )
@@ -349,7 +352,9 @@ void ClassList::RadixSort( int first, int last ) {
 			} // if
 		
 	} // for
-		
+	
+	delete[] temp ;
+	
 } // radix sort
 
 void ClassList::DoRSort() {
