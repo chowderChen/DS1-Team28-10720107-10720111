@@ -147,6 +147,15 @@ class Tree {
 		head = NULL ;	
 	}
 	
+	
+	bool IsEmpty() {
+		if ( head == NULL )
+			return true ;
+			
+		return false ;
+		
+	} // empty
+	
 	void CreateByName( vector< CollegeType > collegeSet ) {
 		;
 	} // 
@@ -157,7 +166,27 @@ class Tree {
 			InsertByGraduate( head, collegeSet.at(i) ) ;
 		} // for
 		
+		cout << "Number of graduates: " << Height( head ) << "\n" ;
+		
 	} // create by graduate
+	
+	
+	int Height( TreeNode* walk ) {
+		
+		if ( walk == NULL )
+			return 0 ;
+		else {
+			int leftDepth = Height( walk->left ) ;
+			int rightDepth = Height( walk->right ) ;
+			
+			if ( leftDepth > rightDepth )
+				return leftDepth + 1 ;
+			else
+				return rightDepth + 1 ;
+			
+		} // else
+		
+	} // height
 	
 	void InsertByGraduate( TreeNode *&walk, CollegeType aCollege ) {
 		
@@ -175,10 +204,16 @@ class Tree {
 	} // insert
 	
 	void SearchFor( int goal ) {
-		Search( goal, head ) ;
-	} //  
+		bool found = false ;
+		cout << "\nSearch result:\n" ;
+		Search( goal, head, found ) ;
+		if ( !found )
+			cout << "There is no match.\n" ;
+		
+	} //  search graduate
 	
-	void Search( int goal, TreeNode *walk ) {
+	void Search( int goal, TreeNode *walk, bool &found ) {
+		
 		if ( walk == NULL )
 			;
 		else if ( walk->content.numGraduate >= goal ) {
@@ -186,28 +221,66 @@ class Tree {
 				 << walk->content.division << "\t" << walk->content.level << "\t" 
 				 << walk->content.numStudent << "\t" << walk->content.numTeacher << "\t"
 				 << walk->content.numGraduate << "\n";
-				 
-			Search( goal, walk->left ) ;
-			Search( goal, walk->right ) ;
+			
+			found = true ;
+			Search( goal, walk->left, found ) ;
+			Search( goal, walk->right, found ) ;
 		} // else if
 		else{
-			Search( goal, walk->left ) ;
-			Search( goal, walk->right ) ;
+			Search( goal, walk->left, found ) ;
+			Search( goal, walk->right, found ) ;
 		} // else
 		
 	} // search
+	
 	
 }; // class tree
 
 int main() {
 	
 	ClassList classList ;
-	classList.Load( "601" ) ;
-	classList.Print() ;
-	cout << "list above\n" ;
-	Tree tree ;
-	tree.CreateByGraduate( classList.GetSet() ) ;
-	tree.SearchFor( 120 ) ;
+	Tree treeGraduate ;
+	int cmd = 0 ;
+	cout << "(1)Build Tree\n(2)Search by Number of Graduates\n(3)Search by School Name\n(0)Exit\nCommand:" ;
+	cin >> cmd ;
+	
+	while ( cmd != 0 ) {
+		
+		if ( cmd == 1 ) {
+			cout << "File name: " ;
+			string fileName ;
+			cin >> fileName ;
+			classList.Load( fileName ) ;
+			classList.Print() ;
+			cout << "\n[Tree heights]\n" ;
+			treeGraduate.CreateByGraduate( classList.GetSet() ) ;
+		} // cmd 1
+		else if ( cmd == 2 ) {
+			if ( treeGraduate.IsEmpty() )
+				cout << "Need to build a tree first.\n" ;
+			else {
+				cout << "Number of graduates you want to find: " ;
+				int numGraduate = -1 ;
+				cin >> numGraduate ;
+				while ( numGraduate < 0 ) {
+					cout << "Number has to be 0 or positive.\nNumber of graduates you want to find: " ;
+					cin >> numGraduate ;
+				} // while
+				treeGraduate.SearchFor( numGraduate ) ;
+			} // else
+		} // cmd 2
+		else if ( cmd == 3 ) {
+			cout << "School name you want to find: " ;
+			string schoolName ;
+			cin >> schoolName ;
+		} // cmd 2
+		else
+			cout << "Command not found.\n" ;
+			
+		cout << "\n(1)Build Tree\n(2)Search by Number of Graduates\n(3)Search by School Name\n(0)Exit\nCommand:" ;
+		cin >> cmd ;
+		
+	} // while
 	
 	return 0 ;
 	
