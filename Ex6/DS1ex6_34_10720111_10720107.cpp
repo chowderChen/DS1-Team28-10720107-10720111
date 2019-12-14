@@ -30,7 +30,12 @@ class ClassList {
 	
 	bool Load( string fileName ) ;
 	void Print() ;
+	vector< CollegeType > GetSet() ;
 };
+
+vector< CollegeType > ClassList::GetSet() {
+	return collegeSet ;	
+} 
 
 void ClassList::Print() {
 	
@@ -133,14 +138,76 @@ struct TreeNode {
 
 class Tree {
 	
+	TreeNode *head ;
 	
-};
+	
+	public:
+		
+	Tree() {
+		head = NULL ;	
+	}
+	
+	void CreateByName( vector< CollegeType > collegeSet ) {
+		;
+	} // 
+	
+	void CreateByGraduate( vector< CollegeType > collegeSet ) {
+		
+		for ( int i = 0 ; i < collegeSet.size() ; i++ )	{
+			InsertByGraduate( head, collegeSet.at(i) ) ;
+		} // for
+		
+	} // create by graduate
+	
+	void InsertByGraduate( TreeNode *&walk, CollegeType aCollege ) {
+		
+		if ( walk == NULL ) {
+			walk = new TreeNode ;
+			walk->content = aCollege ;
+			walk->left = NULL ;
+			walk->right = NULL ;
+		} // if
+		else if ( aCollege.numGraduate < walk->content.numGraduate )
+			InsertByGraduate( walk->left, aCollege ) ;
+		else
+			InsertByGraduate( walk->right, aCollege ) ;
+			
+	} // insert
+	
+	void SearchFor( int goal ) {
+		Search( goal, head ) ;
+	} //  
+	
+	void Search( int goal, TreeNode *walk ) {
+		if ( walk == NULL )
+			;
+		else if ( walk->content.numGraduate >= goal ) {
+			cout << walk->content.nameSchool << "\t" << walk->content.nameMajor << "\t"
+				 << walk->content.division << "\t" << walk->content.level << "\t" 
+				 << walk->content.numStudent << "\t" << walk->content.numTeacher << "\t"
+				 << walk->content.numGraduate << "\n";
+				 
+			Search( goal, walk->left ) ;
+			Search( goal, walk->right ) ;
+		} // else if
+		else{
+			Search( goal, walk->left ) ;
+			Search( goal, walk->right ) ;
+		} // else
+		
+	} // search
+	
+}; // class tree
 
 int main() {
 	
 	ClassList classList ;
 	classList.Load( "601" ) ;
 	classList.Print() ;
+	cout << "list above\n" ;
+	Tree tree ;
+	tree.CreateByGraduate( classList.GetSet() ) ;
+	tree.SearchFor( 120 ) ;
 	
 	return 0 ;
 	
