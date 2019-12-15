@@ -1,4 +1,4 @@
-// 10720111 陳少暉 10720107 陳丕中 
+// 10720111 陳少暉 10720107 陳丕中
 
 #include<iostream> 
 #include<cstdio>
@@ -27,11 +27,19 @@ class ClassList {
 	ClassList(){
 		
 	} // ClassList
+	~ClassList() {
+		ClearList() ;
+	}
 	
 	bool Load( string fileName ) ;
 	void Print() ;
 	vector< CollegeType > GetSet() ;
+	void ClearList() ;
 };
+
+void ClassList::ClearList() {
+	collegeSet.clear() ;
+}
 
 vector< CollegeType > ClassList::GetSet() {
 	return collegeSet ;	
@@ -146,6 +154,9 @@ class Tree {
 	Tree() {
 		head = NULL ;	
 	}
+	~Tree(){
+		Clear( head ) ;
+	} // ~tree
 	
 	
 	bool IsEmpty() {
@@ -170,6 +181,22 @@ class Tree {
 		
 	} // create by graduate
 	
+	void ClearTree() {
+		Clear( head ) ;
+		head = NULL ;
+	} // clear
+	
+	void Clear( TreeNode* walk ) {
+		
+		if ( walk == NULL )
+			;
+		else {
+			Clear( walk->left ) ;
+			Clear( walk->right ) ;
+			delete walk ;
+		} // else
+		
+	} // clear
 	
 	int Height( TreeNode* walk ) {
 		
@@ -247,13 +274,20 @@ int main() {
 	while ( cmd != 0 ) {
 		
 		if ( cmd == 1 ) {
+			
+			classList.ClearList() ;
+			treeGraduate.ClearTree() ;
 			cout << "File name: " ;
 			string fileName ;
 			cin >> fileName ;
-			classList.Load( fileName ) ;
-			classList.Print() ;
-			cout << "\n[Tree heights]\n" ;
-			treeGraduate.CreateByGraduate( classList.GetSet() ) ;
+			if ( classList.Load( fileName ) ) {
+				classList.Print() ;
+				cout << "\n[Tree heights]\n" ;
+				treeGraduate.CreateByGraduate( classList.GetSet() ) ;
+			} // if
+			else
+				cout << "File not found.\n" ;
+				
 		} // cmd 1
 		else if ( cmd == 2 ) {
 			if ( treeGraduate.IsEmpty() )
