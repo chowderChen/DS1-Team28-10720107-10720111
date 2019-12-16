@@ -1,4 +1,4 @@
-// 10720111 é™³å°‘æš‰ 10720107 é™³ä¸•ä¸­ 
+// 10720111 ³¯¤Ö·u 10720107 ³¯¥A¤¤ 
 
 #include<iostream> 
 #include<cstdio>
@@ -315,6 +315,7 @@ int main() {
 	
 	ClassList classList ;
 	Tree treeGraduate ;
+	Tree treeName ; 
 	int cmd = 0 ;
 	cout << "(1)Build Tree\n(2)Search by Number of Graduates\n(3)Search by School Name\n(0)Exit\nCommand:" ;
 	cin >> cmd ;
@@ -325,6 +326,7 @@ int main() {
 			
 			classList.ClearList() ;
 			treeGraduate.ClearTree() ;
+			treeName.ClearTree() ;
 			cout << "File name: " ;
 			string fileName ;
 			cin >> fileName ;
@@ -332,6 +334,7 @@ int main() {
 				classList.Print() ;
 				cout << "\n[Tree heights]\n" ;
 				treeGraduate.CreateByGraduate( classList.GetSet() ) ;
+				treeName.CreateByName( classList.GetSet() ) ;
 			} // if
 			else
 				cout << "File not found.\n" ;
@@ -352,16 +355,16 @@ int main() {
 			} // else
 		} // cmd 2
 		else if ( cmd == 3 ) {
-			if ( treeGraduate.IsEmpty() ) 
+			if ( treeName.IsEmpty() ) 
 			    cout << "Need to build a tree first.\n" ;
 			else {
 				cout << "School name you want to find: " ;
 				string schoolName ;
 				cin >> schoolName ;	
-				treeGraduate.SearchForName( schoolName ) ;
+				treeName.SearchForName( schoolName ) ;
 			} // else
 			
-		} // cmd 2
+		} // cmd 3
 		else
 			cout << "Command not found.\n" ;
 			
