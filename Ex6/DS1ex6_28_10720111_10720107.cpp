@@ -1,4 +1,4 @@
-// 10720111 陳少暉 10720107 陳丕中
+// 10720111 陳少暉 10720107 陳丕中 
 
 #include<iostream> 
 #include<cstdio>
@@ -332,7 +332,6 @@ int main() {
 				classList.Print() ;
 				cout << "\n[Tree heights]\n" ;
 				treeGraduate.CreateByGraduate( classList.GetSet() ) ;
-				treeGraduate.CreateByName( classList.GetSet() ) ;
 			} // if
 			else
 				cout << "File not found.\n" ;
