@@ -37,7 +37,18 @@ class ClassList {
 	void Print() ;
 	vector< CollegeType > GetSet() ;
 	void ClearList() ;
+	void Remove( CollegeType aCollege ) ;
 };
+
+void ClassList::Remove( CollegeType aCollege ) {
+	
+	for ( int i = 0 ; i < collegeSet.size() ; i++ ) {
+		if ( collegeSet.at( i ).nameSchool == aCollege.nameSchool && collegeSet.at( i ).nameMajor == aCollege.nameMajor 
+			 && collegeSet.at( i ).division == aCollege.division && collegeSet.at( i ).level == aCollege.level )
+			 collegeSet.erase( collegeSet.begin() + i ) ;
+	} // for
+	
+} // remove list
 
 void ClassList::ClearList() {
 	collegeSet.clear() ;
@@ -160,6 +171,9 @@ class Tree {
 		Clear( head ) ;
 	} // ~tree
 	
+	TreeNode*& GetHead() {
+		return head ;
+	} // 
 	
 	bool IsEmpty() {
 		if ( head == NULL )
@@ -308,6 +322,69 @@ class Tree {
 		} // else
 	} // SearchName()
 	
+	void DeleteNode( TreeNode* node ) {
+		if ( node->left == NULL && node->right == NULL ) {
+				delete node ;
+				node = NULL ;
+		} // if
+		else if ( node->left == NULL ) {
+			TreeNode* temp = node ;
+			node = node->right ;
+			delete temp ;
+		} // else if
+		else if ( node->right == NULL ) {
+			TreeNode* temp = node ;
+			node = node->left ;
+			delete temp ;
+		} // else if
+		else if ( node->left != NULL && node->right != NULL ) {
+			TreeNode* temp = node->right ;
+			while( temp->left != NULL )
+				temp = temp->left ;
+					
+			node->content = temp->content ;
+			DeleteNode( temp ) ;
+		} // two child
+			
+	} // delete node 
+	
+	void DeleteName( TreeNode*& walk, CollegeType aCollege ) {
+		
+		if ( walk == NULL )
+			;
+		else if ( walk->content.nameSchool == aCollege.nameSchool && walk->content.nameMajor == aCollege.nameMajor 
+			 && walk->content.division == aCollege.division && walk->content.level == aCollege.level ) {
+			DeleteNode( walk ) ;
+		} // else if
+		else {
+			DeleteName( walk->left, aCollege ) ;
+			DeleteName( walk->right, aCollege ) ;
+		} // else
+		
+	} // delete tree of name
+	
+	void DeleteGraduate( TreeNode* walk, int goal, Tree& treeName, ClassList& classList ) {
+		if ( walk == NULL )
+			;
+		else if ( walk->content.numGraduate <= goal ) {
+			
+			cout << walk->content.nameSchool << "\t" << walk->content.nameMajor << "\t"
+				 << walk->content.division << "\t" << walk->content.level << "\t" 
+				 << walk->content.numStudent << "\t" << walk->content.numTeacher << "\t"
+				 << walk->content.numGraduate << "\n";
+				 
+			// classList.Remove( walk->content ) ;
+			// treeName.DeleteName( treeName.GetHead(), walk->content ) ;
+			DeleteNode( walk ) ;
+			
+			DeleteGraduate( walk, goal, treeName, classList ) ;
+		} // else if
+		else {
+			DeleteGraduate( walk->left, goal, treeName, classList ) ;
+			DeleteGraduate( walk->right, goal, treeName, classList ) ;
+		} // else
+		
+	} // Delete graduate
 	
 }; // class tree
 
@@ -317,7 +394,7 @@ int main() {
 	Tree treeGraduate ;
 	Tree treeName ; 
 	int cmd = 0 ;
-	cout << "(1)Build Tree\n(2)Search by Number of Graduates\n(3)Search by School Name\n(0)Exit\nCommand:" ;
+	cout << "(1)Build Tree\n(2)Search by Number of Graduates\n(3)Search by School Name\n(4)Removal by Number of Graduates(not working)\n(0)Exit\nCommand:" ;
 	cin >> cmd ;
 	
 	while ( cmd != 0 ) {
@@ -365,10 +442,17 @@ int main() {
 			} // else
 			
 		} // cmd 3
+		else if ( cmd == 4 ) {
+			int goal = -1 ;
+			cout << "Number of graduates: " ;
+			cin >> goal ;
+			treeGraduate.DeleteGraduate( treeGraduate.GetHead(), goal, treeName, classList ) ;
+			cout << "\n[Tree heights]\nNumber of graduates: " << treeGraduate.Height( treeGraduate.GetHead() ) << "\nSchool name: " << treeName.Height( treeName.GetHead() ) << "\n" ;
+		} // cmd 4
 		else
 			cout << "Command not found.\n" ;
 			
-		cout << "\n(1)Build Tree\n(2)Search by Number of Graduates\n(3)Search by School Name\n(0)Exit\nCommand:" ;
+		cout << "\n(1)Build Tree\n(2)Search by Number of Graduates\n(3)Search by School Name\n(4)Removal by Number of Graduates(not working)\n(0)Exit\nCommand:" ;
 		cin >> cmd ;
 		
 	} // while
